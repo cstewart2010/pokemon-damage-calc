@@ -1,0 +1,13 @@
+﻿<div class="h3">Errors</div>
+@foreach (var error in Errors)
+{
+    foreach (var line in error.Split("\n"))
+    {
+        <div>@line</div>
+    }
+}
+
+@code {
+    [Parameter]
+    public required ICollection<string> Errors { get; set; }
+}

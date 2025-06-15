@@ -1,0 +1,46 @@
+﻿@using TheReplacement.PokemonDamageCalc.Client.DataModel;
+
+<div class="input-group">
+    <span class="input-group-text">Offensive Pokemon Species</span>
+    <input class="form-control" type="text" @bind-value="Names.Offensive" @bind-value:after="SetListsInternal" />
+    <span class="input-group-text">Level</span>
+    <input class="form-control" type="number" min="1" max="100" @bind-value="Levels.Offensive" @bind-value:after="SetListsInternal" />
+    <span class="input-group-text">Nature</span>
+    <InputSelect class="form-select" @bind-Value="NatureIndicies.Offensive" @bind-Value:after="SetListsInternal">
+        @for (var index = 0; index < Natures.Count; index++)
+        {
+            <option value="@index">@Natures[index].Name</option>
+        }
+    </InputSelect>
+</div>
+
+<div class="input-group">
+    <span class="input-group-text">Defensive Pokemon Species</span>
+    <input class="form-control" type="text" @bind-value="Names.Defensive" @bind-value:after="SetListsInternal" />
+    <span class="input-group-text">Level</span>
+    <input class="form-control" type="number" min="1" max="100" @bind-value="Levels.Defensive" @bind-value:after="SetListsInternal" />
+    <span class="input-group-text">Nature</span>
+    <InputSelect class="form-select" @bind-Value="NatureIndicies.Defensive" @bind-Value:after="SetListsInternal">
+        @for (var index = 0; index < Natures.Count; index++)
+        {
+            <option value="@index">@Natures[index].Name</option>
+        }
+    </InputSelect>
+</div>
+
+@code {
+    [Parameter]
+    public required Func<IntPair, StringPair, IntPair, Task> SetLists { get; set; }
+    [Parameter]
+    public required List<PokeApiNet.NamedApiResource<PokeApiNet.Nature>> Natures { get; set; }
+    [Parameter]
+    public required IntPair Levels { get; set; }
+    [Parameter]
+    public required IntPair NatureIndicies { get; set; }
+    private StringPair Names = new();
+
+    private async Task SetListsInternal()
+    {
+        await SetLists(Levels, Names, NatureIndicies);
+    }
+}

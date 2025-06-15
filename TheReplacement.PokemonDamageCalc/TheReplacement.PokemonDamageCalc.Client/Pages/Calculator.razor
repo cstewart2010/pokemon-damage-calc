@@ -1,0 +1,615 @@
+﻿@page "/calc"
+@rendermode InteractiveWebAssembly
+@using PokeApiNet;
+@using TheReplacement.PokemonDamageCalc.Client.Services;
+@using TheReplacement.PokemonDamageCalc.Client.DataModel;
+@using TheReplacement.PokemonDamageCalc.Client.Constants;
+
+<PageTitle>Calculator</PageTitle>
+<!-- Fix the monolith -->
+
+@if (IsReady)
+{
+    <div class="input-group">
+        <span class="input-group-text">Offensive Pokemon Species</span>
+        <input class="form-control" type="text" @bind-value="Names.Offensive" @bind-value:after="ResetOffensivePokemonAsync" />
+        <span class="input-group-text">Defensive Pokemon Species</span>
+        <input class="form-control" type="text" @bind-value="Names.Defensive" @bind-value:after="ResetDefensivePokemonAsync" />
+    </div>
+
+    @if (!(_offensivePokemon == null || _defensivePokemon == null))
+    {
+        <div class="input-group">
+            <span class="input-group-text">Offensive Pokemon</span>
+            <InputSelect class="form-select" @bind-Value="FormIndicies.Offensive" @bind-Value:after="UpdateOffensiveForm">
+                @for (var index = 0; index < _offensivePokemonList.Count; index++)
+                {
+                    <option value="@index">@_offensivePokemonList[index].Name</option>
+                }
+            </InputSelect>
+            <span class="input-group-text">Level</span>
+            <input class="form-control" type="number" min="1" max="100" @bind-value="Levels.Offensive" @bind-value:after="UpdateOffensiveLevel" />
+            <span class="input-group-text">Nature</span>
+            <InputSelect class="form-select" @bind-Value="NatureIndicies.Offensive" @bind-Value:after="UpdateOffensiveNatureAsync">
+                @for (var index = 0; index < Natures.Count; index++)
+                {
+                    <option value="@index">@Natures[index].Name</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Offensive Pokemon</span>
+            <InputSelect class="form-select" @bind-Value="FormIndicies.Defensive" @bind-Value:after="UpdateDefensiveForm">
+                @for (var index = 0; index < _defensivePokemonList.Count; index++)
+                {
+                    <option value="@index">@_defensivePokemonList[index].Name</option>
+                }
+            </InputSelect>
+            <span class="input-group-text">Level</span>
+            <input class="form-control" type="number" min="1" max="100" @bind-value="Levels.Defensive" @bind-value:after="UpdateDefensiveLevel" />
+            <span class="input-group-text">Nature</span>
+            <InputSelect class="form-select" @bind-Value="NatureIndicies.Defensive" @bind-Value:after="UpdateDefensiveNatureAsync">
+                @for (var index = 0; index < Natures.Count; index++)
+                {
+                    <option value="@index">@Natures[index].Name</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="row text-center border border-dark">
+            <div class="col">Name</div>
+            <div class="col border-dark border-start">Ability</div>
+            <div class="col border-dark border-start">HP</div>
+            <div class="col border-dark border-start">Attack</div>
+            <div class="col border-dark border-start">Defense</div>
+            <div class="col border-dark border-start">Special Attack</div>
+            <div class="col border-dark border-start">Special Defense</div>
+            <div class="col border-dark border-start">Speed</div>
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">@_offensivePokemon.Species</div>
+            <InputSelect class="col border-dark border-start" @bind-Value="_offensivePokemon.Ability">
+                @foreach (var ability in _offensiveAbilityList)
+                {
+                    @if (ability.IsHidden)
+                    {
+                        <option value="@ability.Ability.Name">@ability.Ability.Name (Hidden)</option>
+                    }
+                    else
+                    {
+                        <option value="@ability.Ability.Name">@ability.Ability.Name</option>
+                    }
+                }
+            </InputSelect>
+            <div class="col border-dark border-start">@_offensivePokemon.HP</div>
+            <div class="col border-dark border-start">@_offensivePokemon.Attack</div>
+            <div class="col border-dark border-start">@_offensivePokemon.Defense</div>
+            <div class="col border-dark border-start">@_offensivePokemon.SpecialAttack</div>
+            <div class="col border-dark border-start">@_offensivePokemon.SpecialDefense</div>
+            <div class="col border-dark border-start">@_offensivePokemon.Speed</div>
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">IVs</div>
+            <div class="col border-dark border-start">N/A</div>
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_offensivePokemon.IVs.HP" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_offensivePokemon.IVs.Attack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_offensivePokemon.IVs.Defense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_offensivePokemon.IVs.SpecialAttack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_offensivePokemon.IVs.SpecialDefense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_offensivePokemon.IVs.Speed" />
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">EVs</div>
+            <div class="col border-dark border-start">N/A</div>
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_offensivePokemon.EVs.HP" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_offensivePokemon.EVs.Attack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_offensivePokemon.EVs.Defense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_offensivePokemon.EVs.SpecialAttack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_offensivePokemon.EVs.SpecialDefense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_offensivePokemon.EVs.Speed" />
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">Stages</div>
+            <div class="col border-dark border-start">N/A</div>
+            <div class="col border-dark border-start">N/A</div>
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.Attack" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.Defense" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.SpecialAttack" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.SpecialDefense" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.Speed" />
+        </div>
+        <br />
+        <div class="row text-center border border-dark">
+            <div class="col">Name</div>
+            <div class="col">Ability</div>
+            <div class="col border-dark border-start">HP</div>
+            <div class="col border-dark border-start">Attack</div>
+            <div class="col border-dark border-start">Defense</div>
+            <div class="col border-dark border-start">Special Attack</div>
+            <div class="col border-dark border-start">Special Defense</div>
+            <div class="col border-dark border-start">Speed</div>
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">@_defensivePokemon.Species</div>
+            <InputSelect class="col border-dark border-start" @bind-Value="_defensivePokemon.Ability">
+                @foreach (var ability in _defensiveAbilityList)
+                {
+                    @if (ability.IsHidden)
+                    {
+                        <option value="@ability.Ability.Name">@ability.Ability.Name (Hidden)</option>
+                    }
+                    else
+                    {
+                        <option value="@ability.Ability.Name">@ability.Ability.Name</option>
+                    }
+                }
+            </InputSelect>
+            <div class="col border-dark border-start">@_defensivePokemon.HP</div>
+            <div class="col border-dark border-start">@_defensivePokemon.Attack</div>
+            <div class="col border-dark border-start">@_defensivePokemon.Defense</div>
+            <div class="col border-dark border-start">@_defensivePokemon.SpecialAttack</div>
+            <div class="col border-dark border-start">@_defensivePokemon.SpecialDefense</div>
+            <div class="col border-dark border-start">@_defensivePokemon.Speed</div>
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">IVs</div>
+            <div class="col border-dark border-start">N/A</div>
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_defensivePokemon.IVs.HP" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_defensivePokemon.IVs.Attack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_defensivePokemon.IVs.Defense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_defensivePokemon.IVs.SpecialAttack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_defensivePokemon.IVs.SpecialDefense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="_defensivePokemon.IVs.Speed" />
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">EVs</div>
+            <div class="col border-dark border-start">N/A</div>
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_defensivePokemon.EVs.HP" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_defensivePokemon.EVs.Attack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_defensivePokemon.EVs.Defense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_defensivePokemon.EVs.SpecialAttack" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_defensivePokemon.EVs.SpecialDefense" />
+            <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="_defensivePokemon.EVs.Speed" />
+        </div>
+        <div class="row text-center border border-dark border-top-0">
+            <div class="col">Stages</div>
+            <div class="col border-dark border-start">N/A</div>
+            <div class="col border-dark border-start">N/A</div>
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.Attack" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.Defense" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.SpecialAttack" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.SpecialDefense" />
+            <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.Speed" />
+        </div>
+        <br />
+        <div class="input-group">
+            <span class="input-group-text">Move</span>
+            <input class="form-control" type="text" @bind-value="_moveName" @bind-value:after="SetMoveAsync" />
+        </div>
+        @if (_move != null)
+        {
+            <div class="h3">Damage Rolls</div>
+            <div class="form-check form-switch">
+                <InputCheckbox class="form-check-input" id="critical-check" @bind-Value="_isCritical" />
+                <label class="form-check-label" for="critical-check">
+                    Critical?
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div>Status condition for @_offensivePokemon.Species</div>
+                    <InputRadioGroup @bind-Value="_offensiveStatusCondition">
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" />
+                            <label class="form-check-label" for="healthy-check">
+                                @Statuses.Healthy
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="burn-check" Value="@Statuses.Burn" />
+                            <label class="form-check-label" for="burn-check">
+                                @Statuses.Burn
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" />
+                            <label class="form-check-label" for="poisoned-check">
+                                @Statuses.Poisoned
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="para-check" Value="@Statuses.Paralyzed" />
+                            <label class="form-check-label" for="para-check">
+                                @Statuses.Paralyzed
+                            </label>
+                        </div>
+                    </InputRadioGroup>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div>Status condition for @_defensivePokemon.Species</div>
+                    <InputRadioGroup @bind-Value="_defensiveStatusCondition">
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" />
+                            <label class="form-check-label" for="healthy-check">
+                                @Statuses.Healthy
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="burn-check" Value="@Statuses.Burn" />
+                            <label class="form-check-label" for="burn-check">
+                                @Statuses.Burn
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" />
+                            <label class="form-check-label" for="poisoned-check">
+                                @Statuses.Poisoned
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="para-check" Value="@Statuses.Paralyzed" />
+                            <label class="form-check-label" for="para-check">
+                                @Statuses.Paralyzed
+                            </label>
+                        </div>
+                    </InputRadioGroup>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div>Weather</div>
+                    <InputRadioGroup @bind-Value="_weather">
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="no-weather-check" Value="@Weather.None" />
+                            <label class="form-check-label" for="no-weathe-check">
+                                @Weather.None
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="sunny-check" Value="@Weather.HarshSunlight" />
+                            <label class="form-check-label" for="sunny-check">
+                                @Weather.HarshSunlight
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="rain-check" Value="@Weather.Rain" />
+                            <label class="form-check-label" for="rain-check">
+                                @Weather.Rain
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="sandstorm-check" Value="@Weather.Sandstorm" />
+                            <label class="form-check-label" for="sandstorm-check">
+                                @Weather.Sandstorm
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="hail-check" Value="@Weather.Hail" />
+                            <label class="form-check-label" for="hail-check">
+                                @Weather.Hail
+                            </label>
+                        </div>
+                    </InputRadioGroup>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div>Terrain</div>
+                    <InputRadioGroup @bind-Value="_terrain">
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="no-terrain-check" Value="@Terrain.None" />
+                            <label class="form-check-label" for="no-terrain-check">
+                                @Terrain.None
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="electric-check" Value="@Terrain.ElectricTerrain" />
+                            <label class="form-check-label" for="electric-check">
+                                @Terrain.ElectricTerrain
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="grassy-check" Value="@Terrain.GrassyTerrain" />
+                            <label class="form-check-label" for="grassy-check">
+                                @Terrain.GrassyTerrain
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="misty-check" Value="@Terrain.MisttyTerrain" />
+                            <label class="form-check-label" for="misty-check">
+                                @Terrain.MisttyTerrain
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="psychic-check" Value="@Terrain.PsychicTerrain" />
+                            <label class="form-check-label" for="psychic-check">
+                                @Terrain.PsychicTerrain
+                            </label>
+                        </div>
+                    </InputRadioGroup>
+                </div>
+            </div>
+            <div class="row border border-dark text-center">
+                @for (var index = 85; index <= 100; index++)
+                {
+                    <div class="col-6 col-lg-3 col-xl-2 col-xxl border-end border-dark">
+                        <div class="d-flex d-flex-column align-items-center">
+                            <div class="col border-end border-dark">@index% DR</div>
+                            <div class="col">@GetDamageRoll(index)</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+
+    <br />
+    <div class="h3">Errors</div>
+    @foreach (var error in SetListsErrors)
+    {
+        foreach (var line in error.Split("\n"))
+        {
+            <div>@line</div>
+        }
+    }
+    @foreach (var error in SetPokemonErrors)
+    {
+        foreach (var line in error.Split("\n"))
+        {
+            <div>@line</div>
+        }
+    }
+    @foreach (var error in SetMovesErrors)
+    {
+        foreach (var line in error.Split("\n"))
+        {
+            <div>@line</div>
+        }
+    }
+}
+
+@code {
+    private StringPair Names = new StringPair { Offensive = "pikachu", Defensive = "rattata"}, Abilities = new();
+    private IntPair NatureIndicies = new(), FormIndicies = new(), Levels = new IntPair { Offensive = 1, Defensive = 1};
+    private List<NamedApiResource<Nature>> Natures = [];
+    private ICollection<string> SpecialMovesThatDoPhysicalDamage = [MoveNames.Psyshock, MoveNames.Psystrike, MoveNames.SecretSword], SetListsErrors = [], SetPokemonErrors = [], SetMovesErrors = [];
+    private string _moveName = "tackle";
+    private string _offensiveStatusCondition = Statuses.Healthy, _defensiveStatusCondition = Statuses.Healthy, _weather = Weather.None, _terrain = Terrain.None;
+    private Move? _move;
+    private List<Pokemon> _offensivePokemonList = [], _defensivePokemonList = [];
+    private List<PokemonAbility> _offensiveAbilityList = [], _defensiveAbilityList = [];
+    private bool IsReady, _isCritical;
+    private StattedPokemon? _offensivePokemon, _defensivePokemon;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Natures = await PokeService.GetNatures();
+        _move = await PokeService.GetMoveAsync(_moveName);
+        await SetListsAsync();
+        IsReady = true;
+    }
+
+    private double GetDamageRoll(int randomRoll)
+    {
+        SetMovesErrors.Clear();
+        try
+        {
+            double attack = 1;
+            double defense = 1;
+            var offensivePokemon = _offensivePokemon!;
+            var defensivePokemon = _defensivePokemon!;
+            var move = _move!;
+            double critMultiplier = _isCritical
+                ? offensivePokemon.Ability == AbilityNames.Adaptability
+                    ? 2
+                    : 1.5
+                : 1;
+            double statusMultiplier = 1;
+            int basePower = move.Power ?? 0;
+            if (move.DamageClass.Name == DamageClasses.Physical)
+            {
+                statusMultiplier = DamageHelper.GetStatusMultiplier(offensivePokemon, move, _offensiveStatusCondition);
+                attack = move.Name == MoveNames.BodyPress
+                    ? StatHelper.GetDefenseForBodyPress(_isCritical, defensivePokemon.Ability == AbilityNames.Unaware, offensivePokemon)
+                    : move.Name == MoveNames.FoulPlay
+                        ? StatHelper.GetAttack(_isCritical, defensivePokemon.Ability == AbilityNames.Unaware, defensivePokemon)
+                        : StatHelper.GetAttack(_isCritical, defensivePokemon.Ability == AbilityNames.Unaware, offensivePokemon);
+                defense = StatHelper.GetDefense(_isCritical, offensivePokemon.Ability == AbilityNames.Unaware || move.Name == MoveNames.SacredSword, defensivePokemon);
+            }
+            else if (move.DamageClass.Name == DamageClasses.Special)
+            {
+                attack = StatHelper.GetSpecialAttack(_isCritical, defensivePokemon.Ability == AbilityNames.Unaware, offensivePokemon);
+                defense = SpecialMovesThatDoPhysicalDamage.Contains(move.Name)
+                    ? StatHelper.GetDefense(_isCritical, offensivePokemon.Ability == AbilityNames.Unaware, defensivePokemon)
+                    : StatHelper.GetSpecialDefense(_isCritical, offensivePokemon.Ability == AbilityNames.Unaware, defensivePokemon);
+            }
+            var typeEffectiveness = DamageHelper.GetTypeEffectiveness(move.Type.Name, defensivePokemon);
+            var stab = DamageHelper.GetStab(move.Type.Name, offensivePokemon, Abilities.Offensive);
+            var weather = DamageHelper.GetWeatherMultiplier(_weather, move, defensivePokemon);
+            var terrain = DamageHelper.GetTerrainMultiplier(_terrain, move, offensivePokemon, defensivePokemon);
+            var rawDamage = ((2 * offensivePokemon.Level / 5 + 2) * basePower * (attack / defense)) / 50 + 2;
+            rawDamage = Math.Round(rawDamage * critMultiplier, 0, MidpointRounding.AwayFromZero);
+            rawDamage = Math.Round(rawDamage * (randomRoll / 100.0), 0, MidpointRounding.AwayFromZero);
+            rawDamage = Math.Round(rawDamage * statusMultiplier, 0, MidpointRounding.AwayFromZero);
+            rawDamage = Math.Round(rawDamage * typeEffectiveness, 0, MidpointRounding.AwayFromZero);
+            rawDamage = Math.Round(rawDamage * stab, 0, MidpointRounding.AwayFromZero);
+            rawDamage = Math.Round(rawDamage * weather, 0, MidpointRounding.AwayFromZero);
+            rawDamage = Math.Round(rawDamage * terrain, 0, MidpointRounding.AwayFromZero);
+            return rawDamage;
+        }
+        catch (Exception ex)
+        {
+            SetMovesErrors.Add(ex.ToString());
+            return 0;
+        }
+    }
+
+    private async Task SetMoveAsync()
+    {
+        _move = null;
+        SetMovesErrors.Clear();
+        try
+        {
+            _move = await PokeService.GetMoveAsync(_moveName);
+        }
+        catch
+        {
+            SetMovesErrors.Add($"Failed to get move: {_moveName}");
+        }
+    }
+
+    private async Task SetListsAsync()
+    {
+        SetListsErrors.Clear();
+        var offensiveResult = await TrySetOffensiveFormsAsync();
+        var defensiveResult = await TrySetDefensiveFormsAsync();
+        if (!SetListsErrors.Any() && offensiveResult && defensiveResult)
+        {
+            await SetPokemonAsync();
+        }
+    }
+
+    private async Task SetPokemonAsync()
+    {
+        try
+        {
+            SetPokemonErrors.Clear();
+            SetOffensiveAbilities();
+            SetDefensiveAbilities();
+            _offensivePokemon = await GetStattedPokemonAsync(_offensivePokemonList, NatureIndicies.Offensive, FormIndicies.Offensive, Levels.Offensive);
+            _defensivePokemon = await GetStattedPokemonAsync(_defensivePokemonList, NatureIndicies.Defensive, FormIndicies.Defensive, Levels.Defensive);
+        }
+        catch (Exception ex)
+        {
+            SetPokemonErrors.Add(ex.ToString());
+        }
+    }
+
+    private async Task ResetOffensivePokemonAsync()
+    {
+        var result = await TrySetOffensiveFormsAsync();
+        if (!result)
+        {
+            return;
+        }
+        UpdateOffensiveForm();
+    }
+
+    private async Task ResetDefensivePokemonAsync()
+    {
+        var result = await TrySetDefensiveFormsAsync();
+        if (!result)
+        {
+            return;
+        }
+        UpdateDefensiveForm();
+    }
+
+    private void UpdateOffensiveForm()
+    {
+        _offensivePokemon!.UpdateForm(_offensivePokemonList[FormIndicies.Offensive]);
+        SetOffensiveAbilities();
+    }
+
+    private void UpdateDefensiveForm()
+    {
+        _defensivePokemon!.UpdateForm(_defensivePokemonList[FormIndicies.Defensive]);
+        SetDefensiveAbilities();
+    }
+
+    private async Task UpdateOffensiveNatureAsync()
+    {
+        var offensiveNature = await PokeService.GetNatureAsync(Natures[NatureIndicies.Offensive]);
+        _offensivePokemon!.UpdateNature(offensiveNature);
+    }
+
+    private async Task UpdateDefensiveNatureAsync()
+    {
+        var defensiveNature = await PokeService.GetNatureAsync(Natures[NatureIndicies.Defensive]);
+        _defensivePokemon!.UpdateNature(defensiveNature);
+    }
+
+    private void UpdateOffensiveLevel()
+    {
+        _offensivePokemon!.Level = Levels.Offensive;
+    }
+
+    private void UpdateDefensiveLevel()
+    {
+        _defensivePokemon!.Level = Levels.Defensive;
+    }
+
+    public async Task<bool> TrySetOffensiveFormsAsync()
+    {
+        if (string.IsNullOrEmpty(Names.Offensive))
+        {
+            return false;
+        }
+
+        _offensivePokemonList = [];
+        FormIndicies.Offensive = 0;
+        try
+        {
+            _offensivePokemonList = await PokeService.GetPokemonAsync(Names.Offensive);
+            return true;
+        }
+        catch
+        {
+            SetListsErrors.Add($"Failed to get offensive pokemon: {Names.Offensive}");
+            return false;
+        }
+    }
+
+    public async Task<bool> TrySetDefensiveFormsAsync()
+    {
+        if (string.IsNullOrEmpty(Names.Defensive))
+        {
+            return false;
+        }
+
+        _defensivePokemonList = [];
+        FormIndicies.Defensive = 0;
+        try
+        {
+            _defensivePokemonList = await PokeService.GetPokemonAsync(Names.Defensive);
+            return true;
+        }
+        catch
+        {
+            SetListsErrors.Add($"Failed to get defensive pokemon: {Names.Defensive}");
+            return false;
+        }
+    }
+
+    private void SetOffensiveAbilities()
+    {
+        if (Levels.Offensive > 100)
+        {
+            Levels.Offensive = 100;
+        }
+        else if (Levels.Offensive < 1)
+        {
+            Levels.Offensive = 1;
+        }
+        _offensiveAbilityList = _offensivePokemonList[FormIndicies.Offensive].Abilities;
+    }
+
+    private void SetDefensiveAbilities()
+    {
+        if (Levels.Defensive > 100)
+        {
+            Levels.Defensive = 100;
+        }
+        else if (Levels.Defensive < 1)
+        {
+            Levels.Defensive = 1;
+        }
+        _defensiveAbilityList = _defensivePokemonList[FormIndicies.Defensive].Abilities;
+    }
+
+    private async Task<StattedPokemon> GetStattedPokemonAsync(List<Pokemon> formList, int natureIndex, int formIndex, int level)
+    {
+        var nature = await PokeService.GetNatureAsync(Natures[natureIndex]);
+        var pokemon = new StattedPokemon(formList[formIndex], nature)
+        {
+            Level = level
+        };
+
+        return pokemon;
+    }
+}
