@@ -24,8 +24,12 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return collection;
         }
 
-        public static async Task<Move> GetMoveAsync(string name)
+        public static async Task<Move?> GetMoveAsync(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
             var move = await Client.GetResourceAsync<Move>(name);
             return move;
         }
@@ -33,6 +37,18 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         public static async Task<Nature> GetNatureAsync(NamedApiResource<Nature> resource)
         {
             return await Client.GetResourceAsync(resource);
+        }
+
+        public static async Task<List<string>> GetPokedexAsync()
+        {
+            var list = await Client.GetNamedResourcePageAsync<PokemonSpecies>(2000, 0);
+            return list.Results.Select(x => x.Name.ToCapitalized()).ToList();
+        }
+
+        public static async Task<List<string>> GetMovesAsync()
+        {
+            var list = await Client.GetNamedResourcePageAsync<Move>(1000, 0);
+            return list.Results.Select(x => x.Name.ToCapitalized()).ToList();
         }
 
         public static async Task<List<NamedApiResource<Nature>>> GetNatures()
