@@ -69,6 +69,16 @@
                     <option value="@ItemCollection[index].Name.ToCapitalized()">@ItemCollection[index].Name.ToCapitalized()</option>
                 }
             </datalist>
+            @if (_conditionals.IsOffensivePokemonTera)
+            {
+                <span class="input-group-text">Tera Type</span>
+                <InputSelect class="form-select" @bind-Value="Tera.Offensive" @bind-Value:after="UpdateOffensiveTeraAsync">
+                    @foreach (var type in Types.EffectivenessChart.Keys)
+                    {
+                        <option value="@type">@type.ToCapitalized()</option>
+                    }
+                </InputSelect>
+            }
         </div>
         <div class="input-group">
             <span class="input-group-text">Defensive Pokemon</span>
@@ -109,6 +119,16 @@
                     <option value="@ItemCollection[index].Name.ToCapitalized()">@ItemCollection[index].Name.ToCapitalized()</option>
                 }
             </datalist>
+            @if (_conditionals.IsDefensivePokemonTera)
+            {
+                <span class="input-group-text">Tera Type</span>
+                <InputSelect class="form-select" @bind-Value="Tera.Defensive" @bind-Value:after="UpdateDefensiveTeraAsync">
+                    @foreach (var type in Types.EffectivenessChart.Keys)
+                    {
+                        <option value="@type">@type.ToCapitalized()</option>
+                    }
+                </InputSelect>
+            }
         </div>
         <div class="row text-center border border-dark">
             <div class="col">Name</div>
@@ -214,8 +234,15 @@
         </div>
         @if (_move != null)
         {
-            <div class="h3">Move Description</div>
-            <div class="row border border-dark">
+            <div class="h3">
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="description-check" @bind-Value="_conditionals.DisplayDescription" />
+                    <label class="form-check-label" for="description-check">
+                        Move Description
+                    </label>
+                </div>
+            </div>
+            <div class="row border border-dark" hidden="@(!_conditionals.DisplayDescription)">
                 <div class="col">Name</div>
                 <div class="col border-dark border-start">Type</div>
                 <div class="col border-dark border-start">Damage Class</div>
@@ -223,7 +250,7 @@
                 <div class="col border-dark border-start">Base Power</div>
                 <div class="col border-dark border-start">Accuracy</div>
             </div>
-            <div class="row border border-dark border-top-0">
+            <div class="row border border-dark border-top-0" hidden="@(!_conditionals.DisplayDescription)">
                 <div class="col">@_move.Name.ToCapitalized()</div>
                 <div class="col border-dark border-start">@_move.Type.Name.ToCapitalized()</div>
                 <div class="col border-dark border-start">@_move.DamageClass.Name.ToCapitalized()</div>
@@ -231,8 +258,15 @@
                 <div class="col border-dark border-start">@_damage</div>
                 <div class="col border-dark border-start">@_move.Accuracy</div>
             </div>
-            <div class="h3">Damage Rolls</div>
-            <div class="row">
+            <div class="h3">
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="conditions-check" @bind-Value="_conditionals.DisplayConditions" />
+                    <label class="form-check-label" for="conditions-check">
+                        Conditions
+                    </label>
+                </div>
+            </div>
+            <div class="row" hidden="@(!_conditionals.DisplayConditions)">
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="critical-check" @bind-Value="_conditionals.IsCriticalHit" />
                     <label class="form-check-label" for="critical-check">
@@ -248,83 +282,126 @@
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="glaive-rush-check" @bind-Value="_conditionals.AfterGlaiveRush" />
                     <label class="form-check-label" for="glaive-rush-check">
-                        Did the defending pokemon use Glaive Rush?
+                        Did
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        use Glaive Rush?
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="minimized-check" @bind-Value="_conditionals.IsMinimized" />
                     <label class="form-check-label" for="minimized-check">
-                        Is the defending pokemon minimized
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        minimized
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="laser-check" @bind-Value="_conditionals.IsLaserFocus" />
                     <label class="form-check-label" for="laser-check">
-                        Is the defending pokemon under Laser Focus
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        under Laser Focus
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="dig-check" @bind-Value="_conditionals.UsedDig" @bind-Value:after="OnSemiInvulnerabilityToggle" />
                     <label class="form-check-label" for="dig-check">
-                        Did defending pokemon use Dig
+                        Did
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        use Dig
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="dive-check" @bind-Value="_conditionals.UsedDive" @bind-Value:after="OnSemiInvulnerabilityToggle" />
                     <label class="form-check-label" for="dive-check">
-                        Did defending pokemon use Dive
+                        Did
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        use Dive
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="fly-check" @bind-Value="_conditionals.UsedFly" @bind-Value:after="OnSemiInvulnerabilityToggle" />
                     <label class="form-check-label" for="fly-check">
-                        Did defending pokemon use Fly
+                        Did
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        use Fly
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="reflect-check" @bind-Value="_conditionals.UsedReflect" />
                     <label class="form-check-label" for="reflect-check">
-                        Is the defending pokemon under Reflect
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        under Reflect
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="light-screen-check" @bind-Value="_conditionals.UsedLightScreen" />
                     <label class="form-check-label" for="light-screen-check">
-                        Is the defending pokemon under Light Screen
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        under Light Screen
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="aurora-veil-check" @bind-Value="_conditionals.UsedAuroraVeil" />
                     <label class="form-check-label" for="aurora-veil-check">
-                        Is the defending pokemon under Aurora Veil
-                    </label>
-                </div>
-                <div class="col-lg-2 form-check form-switch">
-                    <InputCheckbox class="form-check-input" id="friend-guard-check" @bind-Value="_conditionals.IsFriendGuarded" @bind-Value:after="OnTagToggle" />
-                    <label class="form-check-label" for="friend-guard-check">
-                        Is the defending pokemon under Friend Guard
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        under Aurora Veil
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="tag-check" @bind-Value="_conditionals.IsTagBattle" @bind-Value:after="OnTagToggle" />
                     <label class="form-check-label" for="tag-check">
-                        Is the defending pokemon in a tag battle
+                        Is this a tag battle
                     </label>
                 </div>
+                @if (_conditionals.IsTagBattle)
+                {
+                    <div class="col-lg-2 form-check form-switch">
+                        <InputCheckbox class="form-check-input" id="friend-guard-check" @bind-Value="_conditionals.IsFriendGuarded" @bind-Value:after="OnTagToggle" />
+                        <label class="form-check-label" for="friend-guard-check">
+                            Is
+                            <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                            under Friend Guard
+                        </label>
+                    </div>
+                }
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="protect-check" @bind-Value="_conditionals.ProtectActive" />
                     <label class="form-check-label" for="protect-check">
-                        Is the defending pokemon under Protect
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        under Protect
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="sub-check" @bind-Value="_conditionals.SubstituteActive" />
                     <label class="form-check-label" for="sub-check">
-                        Is the defending pokemon under Substitute
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        under Substitute
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="sub-check" @bind-Value="_conditionals.IsOffensivePokemonTera" @bind-Value:after="OnTeraToggle" />
+                    <label class="form-check-label" for="sub-check">
+                        Is
+                        <strong>@_offensivePokemon.Species.ToCapitalized()</strong>
+                        terastalized?
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="sub-check" @bind-Value="_conditionals.IsDefensivePokemonTera" @bind-Value:after="OnTeraToggle" />
+                    <label class="form-check-label" for="sub-check">
+                        Is
+                        <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
+                        terastalized?
                     </label>
                 </div>
             </div>
-            <div class="row">
+            <div class="row"  hidden="@(!_conditionals.DisplayConditions)">
                 <div class="col-6 col-md-3 col-lg-2">
                     <div class="h4">Status condition for @_offensivePokemon.Species.ToCapitalized()</div>
                     <InputRadioGroup @bind-Value="StatusConditions.Offensive">
@@ -466,13 +543,14 @@
                     </InputRadioGroup>
                 </div>
             </div>
+            <div class="h3">Damage Rolls</div>
             <div class="h4">
                 <strong>
                     @_move.Name.ToCapitalized():
                 </strong>
                 @SetDamageRolls()
             </div>
-            <div class="row border border-dark text-center">
+            <div class="row border border-dark text-center mb-4">
                 @foreach (var damageRoll in _rolls)
                 {
                     <div class="col-6 col-lg-3 col-xl-2 col-xxl border-end border-dark">
@@ -486,35 +564,38 @@
         }
     }
 
-    <br />
-    <div class="h3">Errors</div>
-    @foreach (var error in SetListsErrors)
+    @if (SetListsErrors.Any() || SetPokemonErrors.Any() || SetMovesErrors.Any())
     {
-        foreach (var line in error.Split("\n"))
+        <div class="h3">Errors</div>
+        @foreach (var error in SetListsErrors)
         {
-            <div>@line</div>
+            foreach (var line in error.Split("\n"))
+            {
+                <div>@line</div>
+            }
         }
-    }
-    @foreach (var error in SetPokemonErrors)
-    {
-        foreach (var line in error.Split("\n"))
+        @foreach (var error in SetPokemonErrors)
         {
-            <div>@line</div>
+            foreach (var line in error.Split("\n"))
+            {
+                <div>@line</div>
+            }
         }
-    }
-    @foreach (var error in SetMovesErrors)
-    {
-        foreach (var line in error.Split("\n"))
+        @foreach (var error in SetMovesErrors)
         {
-            <div>@line</div>
+            foreach (var line in error.Split("\n"))
+            {
+                <div>@line</div>
+            }
         }
     }
 }
 
 @code {
     private StringPair Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
-        StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
-        Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" };
+            StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
+            Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" },
+            Tera = new StringPair();
     private IntPair NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
         Levels = new IntPair { Offensive = 100, Defensive = 100 },
         FormIndicies = new(),
@@ -600,14 +681,26 @@
         }
     }
 
+    private void OnTeraToggle()
+    {
+        if (!(_conditionals.IsOffensivePokemonTera || _offensivePokemon == null))
+        {
+            _offensivePokemon.TeraType = null;
+        }
+        if (!(_conditionals.IsDefensivePokemonTera || _defensivePokemon == null))
+        {
+            _defensivePokemon.TeraType = null;
+        }
+    }
+
     private async Task SetMoveAsync()
     {
+        _move = null;
+        SetMovesErrors.Clear();
         if (string.IsNullOrEmpty(_moveName))
         {
             return;
         }
-        _move = null;
-        SetMovesErrors.Clear();
         if (MovedexCollection.Any(x => x.Equals(_moveName, StringComparison.CurrentCultureIgnoreCase)))
         {
             _move = await PokeService.GetMoveAsync(_moveName);
@@ -664,6 +757,7 @@
 
     private async Task ResetOffensivePokemonAsync()
     {
+        SetListsErrors.Clear();
         var result = await TrySetOffensiveFormsAsync();
         if (!result)
         {
@@ -674,6 +768,7 @@
 
     private async Task ResetDefensivePokemonAsync()
     {
+        SetListsErrors.Clear();
         var result = await TrySetDefensiveFormsAsync();
         if (!result)
         {
@@ -740,18 +835,27 @@
         _defensivePokemon!.HeldItem = Items.Defensive.ToLowerCaseKebab();
     }
 
+    private void UpdateOffensiveTeraAsync()
+    {
+        _offensivePokemon!.TeraType = Tera.Offensive;
+    }
+
+    private void UpdateDefensiveTeraAsync()
+    {
+        _defensivePokemon!.TeraType = Tera.Defensive;
+    }
+
     public async Task<bool> TrySetOffensiveFormsAsync()
     {
         if (string.IsNullOrEmpty(Names.Offensive))
         {
-            return true;
+            return false;
         }
         _offensivePokemonList = [];
         FormIndicies.Offensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Offensive, StringComparison.CurrentCultureIgnoreCase)))
         {
             _offensivePokemonList = await PokeService.GetPokemonAsync(Names.Offensive);
-            SetListsErrors.Clear();
             return true;
         }
         else
@@ -765,14 +869,13 @@
     {
         if (string.IsNullOrEmpty(Names.Defensive))
         {
-            return true;
+            return false;
         }
         _defensivePokemonList = [];
         FormIndicies.Defensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Defensive, StringComparison.CurrentCultureIgnoreCase)))
         {
             _defensivePokemonList = await PokeService.GetPokemonAsync(Names.Defensive);
-            SetListsErrors.Clear();
             return true;
         }
         else

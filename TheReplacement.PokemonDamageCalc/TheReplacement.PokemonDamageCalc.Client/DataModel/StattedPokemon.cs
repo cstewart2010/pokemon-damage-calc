@@ -41,6 +41,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.DataModel
                 }
             }
         }
+        public string? TeraType { get; set; }
         public Stages Stages { get; }
         public IVs IVs { get; }
         public EVs EVs { get; }

@@ -21,7 +21,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             HalfAtFullHealth = [Abilities.Multiscale, Abilities.ShadowShield],
             ContactMoves = [],
             SoundMoves = [],
-            MultiTargetMoves = [MoveTargets.AllPokemon, MoveTargets.AllOtherPokemon],
+            MultiTargetMoves = [MoveTargets.AllOpponents, MoveTargets.AllOtherPokemon],
             DefendedSuperEffective = [Abilities.Filter, Abilities.PrismArmor, Abilities.SolidRock],
             IgnoreProtectMoves = [Moves.DoomDesire, Moves.Feint, Moves.FutureSight, Moves.HyperDrill, Moves.HyperspaceFury, Moves.HyperspaceHole, Moves.HyperspaceHole, Moves.MightyCleave, Moves.PhantomForce, Moves.ShadowForce],
             IgnoreSubstitute = [Moves.HyperspaceFury, Moves.HyperspaceHole, Moves.SpectralThief];
@@ -339,9 +339,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             var checkForBoostedDefense =
                 (weather == Weather.Hail && move.DamageClass.Name == DamageClasses.Physical) ||
                 (weather == Weather.Sandstorm && move.DamageClass.Name == DamageClasses.Special);
+            var types = GetPokemonTypes(defensivePokemon);
             if (checkForBoostedDefense)
             {
-                isBoostDefense = defensivePokemon.Types.Any(effectiveness.BoostedDefensiveTypes.Contains);
+                isBoostDefense = types.Any(effectiveness.BoostedDefensiveTypes.Contains);
             }
             if (isBoostDefense)
             {
@@ -466,7 +467,8 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
 
         private static double GetStab(StattedPokemon offendingPokemon, Move move)
         {
-            if (offendingPokemon.Types.Contains(move.Type.Name) || IsSteelWorker(offendingPokemon, move))
+            var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);
+            if (types.Contains(move.Type.Name) || IsSteelWorker(offendingPokemon, move))
             {
                 if (offendingPokemon.Ability == Abilities.Adaptability)
                 {
@@ -487,8 +489,8 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static double GetTypeEffectivenessMultiplier(string moveTypeName, StattedPokemon defendingPokemon, bool ignoreResistances = false, bool ignoreImmunities = false)
         {
             double effectiveness = 1;
-
-            var pokemonTypes = defendingPokemon.Types.Select(x => Types.EffectivenessChart[x]);
+            var types = GetPokemonTypes(defendingPokemon);
+            var pokemonTypes = types.Select(x => Types.EffectivenessChart[x]);
             foreach (var type in pokemonTypes)
             {
                 if (type.Weaknesses.Contains(moveTypeName))
@@ -656,7 +658,8 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static double GetTerrainMultiplier(string terrain, Move move, StattedPokemon offendingPokemon, StattedPokemon defendingPokemon)
         {
             double multiplier = 1;
-            if (offendingPokemon.Ability == Abilities.Levitate || offendingPokemon.Types.Any(type => type == Types.Flying))
+            var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);
+            if (offendingPokemon.Ability == Abilities.Levitate || types.Any(type => type == Types.Flying))
             {
                 if (!(offendingPokemon.Ability == Abilities.QuarkDrive && terrain == Terrain.ElectricTerrain))
                 {
@@ -675,6 +678,13 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             }
 
             return multiplier;
+        }
+
+        private static IEnumerable<string> GetPokemonTypes(StattedPokemon pokemon)
+        {
+            return pokemon.TeraType == null
+                ? pokemon.Types
+                : [pokemon.TeraType];
         }
     }
 }
