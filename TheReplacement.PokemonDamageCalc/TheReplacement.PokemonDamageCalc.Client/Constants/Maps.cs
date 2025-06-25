@@ -1,19 +1,18 @@
 ﻿using PokeApiNet;
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.RegularExpressions;
 using TheReplacement.PokemonDamageCalc.Client.DataModel;
+using TheReplacement.PokemonDamageCalc.Client.DTOs;
 
 namespace TheReplacement.PokemonDamageCalc.Client.Constants
 {
     public static class Maps
     {
         public static readonly ReadOnlyDictionary<string, Func<StattedPokemon, int>> TrueDamageMap;
-        public static readonly ReadOnlyDictionary<string, Func<StattedPokemon, Move, bool>> IsStatBoostByAbilityMap;
-        public static readonly ReadOnlyDictionary<string, Func<Move, bool>> IsStatBoostByChoiceItemMap;
+        public static readonly ReadOnlyDictionary<string, Func<StattedPokemon, MoveData, bool>> IsStatBoostByAbilityMap;
+        public static readonly ReadOnlyDictionary<string, Func<MoveData, bool>> IsStatBoostByChoiceItemMap;
         public static readonly ReadOnlyDictionary<string, double> OtherStatBoostingItemMap;
         public static readonly ReadOnlyDictionary<string, string> TypeResistantBerryItemMap;
-        public static readonly ReadOnlyDictionary<string, Func<StattedPokemon, StattedPokemon, Move, int>> ConditionalMovePowerMap;
+        public static readonly ReadOnlyDictionary<string, Func<StattedPokemon, StattedPokemon, MoveData, int>> ConditionalMovePowerMap;
         public static readonly ReadOnlyDictionary<string, TerrainEffectiveness> TerrainEffectivenessChart;
         public static readonly ReadOnlyDictionary<string, TypeEffectiveness> TypeEffectivenessChart;
         public static readonly ReadOnlyDictionary<string, WeatherEffectiveness> WeatherEffectivenessChart;
@@ -44,9 +43,9 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
             return dictionary.AsReadOnly();
         }
 
-        private static ReadOnlyDictionary<string, Func<StattedPokemon, Move, bool>> GetIsStatBoostByAbilityMap()
+        private static ReadOnlyDictionary<string, Func<StattedPokemon, MoveData, bool>> GetIsStatBoostByAbilityMap()
         {
-            var dictionary = new Dictionary<string, Func<StattedPokemon, Move, bool>>
+            var dictionary = new Dictionary<string, Func<StattedPokemon, MoveData, bool>>
             {
                 {Abilities.Overgrow, GetIsStatBoostByAbilityFunction(Types.Grass) },
                 {Abilities.Blaze, GetIsStatBoostByAbilityFunction(Types.Fire) },
@@ -57,9 +56,9 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
             return dictionary.AsReadOnly();
         }
 
-        private static ReadOnlyDictionary<string, Func<Move, bool>> GetIsStatBoostByChoiceItemMap()
+        private static ReadOnlyDictionary<string, Func<MoveData, bool>> GetIsStatBoostByChoiceItemMap()
         {
-            var dictionary = new Dictionary<string, Func<Move, bool>>
+            var dictionary = new Dictionary<string, Func<MoveData, bool>>
             {
                 {Items.ChoiceBand, GetIsStatBoostByChoiceItemFunction(DamageClasses.Physical) },
                 {Items.ChoiceSpecs, GetIsStatBoostByChoiceItemFunction(DamageClasses.Special) },
@@ -106,10 +105,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
             return dictionary.AsReadOnly();
         }
 
-        private static ReadOnlyDictionary<string, Func<StattedPokemon, StattedPokemon, Move, int>> GetConditionalMovePowerMap()
+        private static ReadOnlyDictionary<string, Func<StattedPokemon, StattedPokemon, MoveData, int>> GetConditionalMovePowerMap()
         {
             // todo: https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_have_variable_power
-            var dictionary = new Dictionary<string, Func<StattedPokemon, StattedPokemon, Move, int>>
+            var dictionary = new Dictionary<string, Func<StattedPokemon, StattedPokemon, MoveData, int>>
             {
                 {Moves.Return, (offensivePokemon, _, _) => Math.Max((int)(offensivePokemon.Friendship/2.5),1) },
                 {Moves.Frustation, (offensivePokemon, _, _) => Math.Max((int)((255-offensivePokemon.Friendship)/2.5),1) },
@@ -322,14 +321,14 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
             return dictionary.AsReadOnly();
         }
 
-        private static Func<StattedPokemon, Move, bool> GetIsStatBoostByAbilityFunction(string type)
+        private static Func<StattedPokemon, MoveData, bool> GetIsStatBoostByAbilityFunction(string type)
         {
-            return (offensivePokemon, move) => move.Type.Name == type && offensivePokemon.HP >= 2 * offensivePokemon.CurrentHP;
+            return (offensivePokemon, move) => move.Type == type && offensivePokemon.HP >= 2 * offensivePokemon.CurrentHP;
         }
 
-        private static Func<Move, bool> GetIsStatBoostByChoiceItemFunction(string damamgeClass)
+        private static Func<MoveData, bool> GetIsStatBoostByChoiceItemFunction(string damamgeClass)
         {
-            return (move) => move.DamageClass.Name == damamgeClass;
+            return (move) => move.DamageClass == damamgeClass;
         }
 
         private static int HeavySlamMovePower(

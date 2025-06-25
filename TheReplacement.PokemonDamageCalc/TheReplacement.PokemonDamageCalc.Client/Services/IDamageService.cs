@@ -1,5 +1,5 @@
-﻿using PokeApiNet;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
+﻿using TheReplacement.PokemonDamageCalc.Client.DataModel;
+using TheReplacement.PokemonDamageCalc.Client.DTOs;
 
 namespace TheReplacement.PokemonDamageCalc.Client.Services
 {
@@ -8,7 +8,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         public IEnumerable<DamageRoll> GetDamageRolls(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             Conditionals conditionals,
             StringPair statusConditions,
             string weather,

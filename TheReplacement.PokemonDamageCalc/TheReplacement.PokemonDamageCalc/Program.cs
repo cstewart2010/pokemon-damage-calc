@@ -9,7 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddTransient<IStatService, StatService>();
 builder.Services.AddSingleton<IDamageService, DamageService>();
-builder.Services.AddSingleton<IPokeApiService, PokeApiService>();
+builder.Services.AddSingleton<IPokeService, PokeApiService>();
 
 var app = builder.Build();
 
