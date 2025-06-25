@@ -1,11 +1,12 @@
-﻿using PokeApiNet;
-using TheReplacement.PokemonDamageCalc.Client.Constants;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-using TheReplacement.PokemonDamageCalc.Client.DTOs;
-using TheReplacement.PokemonDamageCalc.Client.Extensions;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Domain
 {
+    using PokeApiNet;
+    using TheReplacement.PokemonDamageCalc.Client.Constants;
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+    using TheReplacement.PokemonDamageCalc.Client.Extensions;
+    using TheReplacement.PokemonDamageCalc.Client.Services;
+
     public class PokeApiService : IPokeService
     {
         private readonly PokeApiClient _client;

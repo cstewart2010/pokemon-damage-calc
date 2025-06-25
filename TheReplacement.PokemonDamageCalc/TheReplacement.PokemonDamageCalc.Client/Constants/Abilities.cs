@@ -2,39 +2,40 @@
 {
     public static class Abilities
     {
-        public const string Adaptability = "adaptability";
-        public const string AirLock = "air-lock";
-        public const string BattleArmor = "battle-armor";
-        public const string Blaze = "blaze";
-        public const string CloudNine = "cloud-nine";
-        public const string Filter = "filter";
-        public const string Fluffy = "fluffy";
-        public const string Guts = "guts";
-        public const string IceScales = "ice-scales";
-        public const string Infiltrator = "infiltrator";
-        public const string Levitate = "levitate";
-        public const string Merciless = "merciless";
-        public const string MoldBreaker = "mold-breaker";
-        public const string Multiscale = "multiscale";
-        public const string Neuroforce = "neuroforce";
-        public const string Overgrow = "overgrow";
-        public const string ParentalBond = "parental-bond";
-        public const string PrismArmor = "prism-armor";
-        public const string PunkRock = "punk-rock";
-        public const string QuarkDrive = "quark-drive";
-        public const string Ripen = "ripen";
-        public const string ShadowShield = "shadow-shield";
-        public const string ShellArmor = "shell-armor";
-        public const string Sniper = "sniper";
-        public const string SolidRock = "solid-rock";
-        public const string SteelWorker = "steel-worker";
-        public const string Swarm = "swarm";
-        public const string TintedLens = "tinted-lens";
-        public const string Teravolt = "teravolt";
-        public const string Torrent = "torrent";
-        public const string ToxicBoost = "toxic-boost";
-        public const string Turboblaze = "turboblaze";
-        public const string Unaware = "unaware";
-        public const string UnseenFist = "unseen-fist";
+        public const string
+            Adaptability = "adaptability",
+            AirLock = "air-lock",
+            BattleArmor = "battle-armor",
+            Blaze = "blaze",
+            CloudNine = "cloud-nine",
+            Filter = "filter",
+            Fluffy = "fluffy",
+            Guts = "guts",
+            IceScales = "ice-scales",
+            Infiltrator = "infiltrator",
+            Levitate = "levitate",
+            Merciless = "merciless",
+            MoldBreaker = "mold-breaker",
+            Multiscale = "multiscale",
+            Neuroforce = "neuroforce",
+            Overgrow = "overgrow",
+            ParentalBond = "parental-bond",
+            PrismArmor = "prism-armor",
+            PunkRock = "punk-rock",
+            QuarkDrive = "quark-drive",
+            Ripen = "ripen",
+            ShadowShield = "shadow-shield",
+            ShellArmor = "shell-armor",
+            Sniper = "sniper",
+            SolidRock = "solid-rock",
+            SteelWorker = "steel-worker",
+            Swarm = "swarm",
+            TintedLens = "tinted-lens",
+            Teravolt = "teravolt",
+            Torrent = "torrent",
+            ToxicBoost = "toxic-boost",
+            Turboblaze = "turboblaze",
+            Unaware = "unaware",
+            UnseenFist = "unseen-fist";
     }
 }

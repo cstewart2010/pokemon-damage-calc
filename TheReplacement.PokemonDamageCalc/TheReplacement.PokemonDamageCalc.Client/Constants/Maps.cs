@@ -1,10 +1,9 @@
-﻿using PokeApiNet;
-using System.Collections.ObjectModel;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-using TheReplacement.PokemonDamageCalc.Client.DTOs;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Constants
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Constants
 {
+    using System.Collections.ObjectModel;
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+
     public static class Maps
     {
         public static readonly ReadOnlyDictionary<string, Func<StattedPokemon, int>> TrueDamageMap;

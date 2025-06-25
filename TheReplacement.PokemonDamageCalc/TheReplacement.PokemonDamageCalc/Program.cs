@@ -1,4 +1,4 @@
-using TheReplacement.PokemonDamageCalc.Client.Pages;
+using TheReplacement.PokemonDamageCalc.Client.Domain;
 using TheReplacement.PokemonDamageCalc.Client.Services;
 using TheReplacement.PokemonDamageCalc.Components;
 

@@ -1,9 +1,8 @@
-﻿using PokeApiNet;
-using TheReplacement.PokemonDamageCalc.Client.Constants;
-using TheReplacement.PokemonDamageCalc.Client.DTOs;
-
-namespace TheReplacement.PokemonDamageCalc.Client.DataModel
+﻿namespace TheReplacement.PokemonDamageCalc.Client.DataModel
 {
+    using TheReplacement.PokemonDamageCalc.Client.Constants;
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+
     public class StattedPokemon
     {
         private RawPokemon _pokemon;

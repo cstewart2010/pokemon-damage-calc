@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Constants
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Constants
 {
     public class Types
     {

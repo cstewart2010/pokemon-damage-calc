@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using TheReplacement.PokemonDamageCalc.Client.Domain;
 using TheReplacement.PokemonDamageCalc.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

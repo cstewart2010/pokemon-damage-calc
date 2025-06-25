@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Constants
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Constants
 {
     public static class Weather
     {
@@ -10,9 +7,5 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
         public const string Rain = "Rain";
         public const string Sandstorm = "Sandstorm";
         public const string Hail = "Hail";
-
-        static Weather()
-        {
-        }
     }
 }

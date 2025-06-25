@@ -2,7 +2,6 @@
 @rendermode InteractiveWebAssembly
 @inject IDamageService _damageService;
 @inject IPokeService _pokeService;
-@using PokeApiNet;
 @using TheReplacement.PokemonDamageCalc.Client.Constants;
 @using TheReplacement.PokemonDamageCalc.Client.DataModel;
 @using TheReplacement.PokemonDamageCalc.Client.DTOs;
@@ -13,6 +12,7 @@
 <!-- Fix the monolith -->
 @if (IsReady)
 {
+    <!-- SpeciesInput.razor -->
     <div class="input-group">
         <span class="input-group-text">Offensive Pokemon Species</span>
         <input class="form-control" list="offensiveDex" placeholder="Type to search..." @bind-value="Names.Offensive" @bind-value:after="ResetOffensivePokemonAsync" />
@@ -34,6 +34,7 @@
 
     @if (!(_offensivePokemon == null || _defensivePokemon == null))
     {
+        <!-- PokemonForm.razor -->
         <div class="input-group">
             <span class="input-group-text">Offensive Pokemon</span>
             <InputSelect class="form-select" @bind-Value="FormIndicies.Offensive" @bind-Value:after="UpdateOffensiveForm">
@@ -84,6 +85,7 @@
                 </InputSelect>
             }
         </div>
+        <!-- PokemonForm.razor -->
         <div class="input-group">
             <span class="input-group-text">Defensive Pokemon</span>
             <InputSelect class="form-select" @bind-Value="FormIndicies.Defensive" @bind-Value:after="UpdateDefensiveForm">
@@ -134,6 +136,8 @@
                 </InputSelect>
             }
         </div>
+
+        <!-- PokemonStats.razor -->
         <div class="row text-center border border-dark">
             <div class="col">Name</div>
             <div class="col border-dark border-start">HP</div>
@@ -180,6 +184,7 @@
             <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.Speed" />
         </div>
         <br />
+        <!-- PokemonStats.razor -->
         <div class="row text-center border border-dark">
             <div class="col">Name</div>
             <div class="col border-dark border-start">HP</div>
@@ -226,6 +231,7 @@
             <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.Speed" />
         </div>
         <br />
+        <!-- MoveInput.razor -->
         <div class="input-group">
             <span class="input-group-text">Move</span>
             <input class="form-control" list="moveDex" placeholder="Type to search..." @bind-value="_moveName" @bind-value:after="SetMoveAsync" />
@@ -238,6 +244,7 @@
         </div>
         @if (_move != null)
         {
+            <!-- MoveData.razor -->
             <div class="h3">
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="description-check" @bind-Value="_conditionals.DisplayDescription" />
@@ -262,6 +269,7 @@
                 <div class="col border-dark border-start">@_damage</div>
                 <div class="col border-dark border-start">@_move</div>
             </div>
+            <!-- ConditionalValues.razor -->
             <div class="h3">
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="conditions-check" @bind-Value="_conditionals.DisplayConditions" />
@@ -505,6 +513,7 @@
                     </InputRadioGroup>
                 </div>
             </div>
+            <!-- DamageRolls.razor -->
             <div class="h3">Damage Rolls</div>
             <div class="h4">
                 <strong>
@@ -526,6 +535,7 @@
         }
     }
 
+    <!-- ErrorSection.razor -->
     @if (SetListsErrors.Any() || SetPokemonErrors.Any() || SetMovesErrors.Any())
     {
         <div class="h3">Errors</div>
@@ -554,29 +564,42 @@
 }
 
 @code {
-    private StringPair Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
-            StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
-            Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" },
-            Tera = new StringPair();
-    private IntPair NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
+    private StringPair
+        Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
+        StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
+        Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" },
+        Tera = new StringPair();
+    private IntPair
+        NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
         Levels = new IntPair { Offensive = 100, Defensive = 100 },
         FormIndicies = new(),
         Abilities = new();
-    private List<string> Natures = [];
-    private List<string> ItemCollection = [];
-    private List<string> PokedexCollection = [], MovedexCollection = [];
-    private string _moveName = "Blizzard";
-    private ICollection<string> SetListsErrors = [], SetPokemonErrors = [], SetMovesErrors = [];
-    private string _weather = Weather.Hail,
+    private List<string>
+        Natures = [],
+        ItemCollection = [],
+        PokedexCollection = [],
+        MovedexCollection = [];
+    private string
+        _moveName = "Blizzard",
+        _weather = Weather.Hail,
         _terrain = Terrain.None;
+    private ICollection<string>
+        SetListsErrors = [],
+        SetPokemonErrors = [],
+        SetMovesErrors = [];
     private MoveData? _move;
-    private List<RawPokemon> _offensivePokemonList = [], _defensivePokemonList = [];
-    private List<AbilityData> _offensiveAbilityList = [], _defensiveAbilityList = [];
+    private List<RawPokemon>
+        _offensivePokemonList = [],
+        _defensivePokemonList = [];
+    private List<AbilityData>
+        _offensiveAbilityList = [],
+        _defensiveAbilityList = [];
     private bool IsReady;
-    private Conditionals _conditionals = new Conditionals();
-    private StattedPokemon? _offensivePokemon, _defensivePokemon;
-    private IEnumerable<DamageRoll> _rolls = [];
+    private StattedPokemon?
+        _offensivePokemon, _defensivePokemon;
     private object? _damage;
+    private Conditionals _conditionals = new Conditionals();
+    private IEnumerable<DamageRoll> _rolls = [];
 
     protected override async Task OnInitializedAsync()
     {

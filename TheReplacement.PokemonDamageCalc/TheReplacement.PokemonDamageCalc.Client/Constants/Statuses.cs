@@ -2,10 +2,11 @@
 {
     public static class Statuses
     {
-        public const string BadlyPoisoned = "BadlyPoisoned";
-        public const string Burn = "Burn";
-        public const string Poisoned = "Poisoned";
-        public const string Paralyzed = "Paralyzed";
-        public const string Healthy = "Healthy";
+        public const string
+            BadlyPoisoned = "BadlyPoisoned",
+            Burn = "Burn",
+            Poisoned = "Poisoned",
+            Paralyzed = "Paralyzed",
+            Healthy = "Healthy";
     }
 }

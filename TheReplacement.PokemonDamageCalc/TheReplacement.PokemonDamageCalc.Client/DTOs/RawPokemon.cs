@@ -1,7 +1,7 @@
-﻿using TheReplacement.PokemonDamageCalc.Client.DataModel;
-
-namespace TheReplacement.PokemonDamageCalc.Client.DTOs
+﻿namespace TheReplacement.PokemonDamageCalc.Client.DTOs
 {
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+
     public class RawPokemon
     {
         public required string SpeciesName { get; init; }

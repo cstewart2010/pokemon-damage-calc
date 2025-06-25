@@ -1,8 +1,7 @@
-﻿using PokeApiNet;
-using TheReplacement.PokemonDamageCalc.Client.DTOs;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Services
 {
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+
     public interface IPokeService
     {
         public Task<List<RawPokemon>> GetPokemonAsync(string name);

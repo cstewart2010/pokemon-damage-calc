@@ -1,18 +1,12 @@
-﻿using TheReplacement.PokemonDamageCalc.Client.Constants;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-using TheReplacement.PokemonDamageCalc.Client.DTOs;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Domain
 {
-    public class DamageService : IDamageService
+    using TheReplacement.PokemonDamageCalc.Client.Constants;
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+    using TheReplacement.PokemonDamageCalc.Client.Services;
+
+    public class DamageService(IStatService statService) : IDamageService
     {
-        private readonly IStatService _statService;
-
-        public DamageService(IStatService statService)
-        {
-            _statService = statService;
-        }
-
         public IEnumerable<DamageRoll> GetDamageRolls(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
@@ -24,7 +18,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         {
             conditionals.IsCriticalHit = conditionals.IsCriticalHit && (!Collections.IgnoreCriticals.Contains(defensivePokemon.Ability) || Collections.IgnoreAbilities.Contains(offensivePokemon.Ability));
             var typeEffectivenessMultiplier = GetTypeEffectivenessMultiplier(move.Type, defensivePokemon);
-            var (attack, defense) = GetStats(_statService, offensivePokemon, defensivePokemon, move, conditionals.IsCriticalHit);
+            var (attack, defense) = GetStats(statService, offensivePokemon, defensivePokemon, move, conditionals.IsCriticalHit);
             var skipDamage = SkipDamageCalculation(
                 offensivePokemon,
                 defensivePokemon,
