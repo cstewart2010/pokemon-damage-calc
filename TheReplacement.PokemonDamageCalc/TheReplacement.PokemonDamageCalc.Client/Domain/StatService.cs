@@ -2,9 +2,9 @@
 
 namespace TheReplacement.PokemonDamageCalc.Client.Services
 {
-    public static class StatHelper
+    public class StatService : IStatService
     {
-        public static double GetAttack(bool isCritical, bool isUnaware, StattedPokemon pokemon)
+        public double GetAttack(bool isCritical, bool isUnaware, StattedPokemon pokemon)
         {
             var attack = pokemon.Attack;
             if ((isCritical && pokemon.Stages.Attack < 0) || isUnaware)
@@ -18,7 +18,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return attack;
         }
 
-        public static double GetDefenseForBodyPress(bool isCritical, bool isUnaware, StattedPokemon pokemon)
+        public double GetDefenseForBodyPress(bool isCritical, bool isUnaware, StattedPokemon pokemon)
         {
             var attack = pokemon.Defense;
             if ((isCritical && pokemon.Stages.Defense < 0) || isUnaware)
@@ -32,7 +32,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return attack;
         }
 
-        public static double GetSpecialAttack(bool isCritical, bool isUnaware, StattedPokemon pokemon)
+        public double GetSpecialAttack(bool isCritical, bool isUnaware, StattedPokemon pokemon)
         {
             var attack = pokemon.SpecialAttack;
             if ((isCritical && pokemon.Stages.SpecialAttack < 0) || isUnaware)
@@ -46,7 +46,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return attack;
         }
 
-        public static double GetDefense(bool isCritical, bool isUnaware, StattedPokemon pokemon)
+        public double GetDefense(bool isCritical, bool isUnaware, StattedPokemon pokemon)
         {
             var defense = pokemon.Defense;
             if ((isCritical && pokemon.Stages.Defense > 0) || isUnaware)
@@ -60,7 +60,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return defense;
         }
 
-        public static double GetSpecialDefense(bool isCritical, bool isUnaware, StattedPokemon pokemon)
+        public double GetSpecialDefense(bool isCritical, bool isUnaware, StattedPokemon pokemon)
         {
             var defense = pokemon.SpecialDefense;
             if ((isCritical && pokemon.Stages.SpecialDefense > 0) || isUnaware)

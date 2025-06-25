@@ -1,4 +1,4 @@
-﻿namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Extensions
 {
     public static class StringExtensions
     {

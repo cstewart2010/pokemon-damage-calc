@@ -1,9 +1,12 @@
 ﻿@page "/calc"
 @rendermode InteractiveWebAssembly
+@inject IDamageService _damageService;
+@inject IPokeApiService _pokeApiService;
 @using PokeApiNet;
-@using TheReplacement.PokemonDamageCalc.Client.Services;
-@using TheReplacement.PokemonDamageCalc.Client.DataModel;
 @using TheReplacement.PokemonDamageCalc.Client.Constants;
+@using TheReplacement.PokemonDamageCalc.Client.DataModel;
+@using TheReplacement.PokemonDamageCalc.Client.Extensions;
+@using TheReplacement.PokemonDamageCalc.Client.Services;
 
 <PageTitle>Calculator</PageTitle>
 <!-- Fix the monolith -->
@@ -73,7 +76,7 @@
             {
                 <span class="input-group-text">Tera Type</span>
                 <InputSelect class="form-select" @bind-Value="Tera.Offensive" @bind-Value:after="UpdateOffensiveTeraAsync">
-                    @foreach (var type in Types.EffectivenessChart.Keys)
+                    @foreach (var type in Maps.TypeEffectivenessChart.Keys)
                     {
                         <option value="@type">@type.ToCapitalized()</option>
                     }
@@ -123,7 +126,7 @@
             {
                 <span class="input-group-text">Tera Type</span>
                 <InputSelect class="form-select" @bind-Value="Tera.Defensive" @bind-Value:after="UpdateDefensiveTeraAsync">
-                    @foreach (var type in Types.EffectivenessChart.Keys)
+                    @foreach (var type in Maps.TypeEffectivenessChart.Keys)
                     {
                         <option value="@type">@type.ToCapitalized()</option>
                     }
@@ -304,7 +307,7 @@
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
-                    <InputCheckbox class="form-check-input" id="dig-check" @bind-Value="_conditionals.UsedDig" @bind-Value:after="OnSemiInvulnerabilityToggle" />
+                    <InputCheckbox class="form-check-input" id="dig-check" @bind-Value="_conditionals.UsedDig" @bind-Value:after="() => { _conditionals.UsedDive = false; _conditionals.UsedFly = false; }" />
                     <label class="form-check-label" for="dig-check">
                         Did
                         <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
@@ -312,7 +315,7 @@
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
-                    <InputCheckbox class="form-check-input" id="dive-check" @bind-Value="_conditionals.UsedDive" @bind-Value:after="OnSemiInvulnerabilityToggle" />
+                    <InputCheckbox class="form-check-input" id="dive-check" @bind-Value="_conditionals.UsedDive" @bind-Value:after="() => { _conditionals.UsedDig = false; _conditionals.UsedFly = false; }" />
                     <label class="form-check-label" for="dive-check">
                         Did
                         <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
@@ -320,7 +323,7 @@
                     </label>
                 </div>
                 <div class="col-lg-2 form-check form-switch">
-                    <InputCheckbox class="form-check-input" id="fly-check" @bind-Value="_conditionals.UsedFly" @bind-Value:after="OnSemiInvulnerabilityToggle" />
+                    <InputCheckbox class="form-check-input" id="fly-check" @bind-Value="_conditionals.UsedFly" @bind-Value:after="() => { _conditionals.UsedDive = false; _conditionals.UsedDig = false; }" />
                     <label class="form-check-label" for="fly-check">
                         Did
                         <strong>@_defensivePokemon.Species.ToCapitalized()</strong>
@@ -475,71 +478,29 @@
                 <div class="col-6 col-md-3 col-lg-2">
                     <div class="h4">Weather</div>
                     <InputRadioGroup @bind-Value="_weather">
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="no-weather-check" Value="@Weather.None" />
-                            <label class="form-check-label" for="no-weathe-check">
-                                @Weather.None
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="sunny-check" Value="@Weather.HarshSunlight" />
-                            <label class="form-check-label" for="sunny-check">
-                                @Weather.HarshSunlight
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="rain-check" Value="@Weather.Rain" />
-                            <label class="form-check-label" for="rain-check">
-                                @Weather.Rain
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="sandstorm-check" Value="@Weather.Sandstorm" />
-                            <label class="form-check-label" for="sandstorm-check">
-                                @Weather.Sandstorm
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="hail-check" Value="@Weather.Hail" />
-                            <label class="form-check-label" for="hail-check">
-                                @Weather.Hail
-                            </label>
-                        </div>
+                        @foreach (var weather in Maps.WeatherEffectivenessChart.Keys)
+                        {
+                            <div class="form-check">
+                                <InputRadio class="form-check-input" id="@weather" Value="weather" />
+                                <label class="form-check-label" for="@weather">
+                                    @weather
+                                </label>
+                            </div>
+                        }
                     </InputRadioGroup>
                 </div>
                 <div class="col-6 col-md-3 col-lg-2">
                     <div class="h4">Terrain</div>
                     <InputRadioGroup @bind-Value="_terrain">
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="no-terrain-check" Value="@Terrain.None" />
-                            <label class="form-check-label" for="no-terrain-check">
-                                @Terrain.None
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="electric-check" Value="@Terrain.ElectricTerrain" />
-                            <label class="form-check-label" for="electric-check">
-                                @Terrain.ElectricTerrain
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="grassy-check" Value="@Terrain.GrassyTerrain" />
-                            <label class="form-check-label" for="grassy-check">
-                                @Terrain.GrassyTerrain
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="misty-check" Value="@Terrain.MisttyTerrain" />
-                            <label class="form-check-label" for="misty-check">
-                                @Terrain.MisttyTerrain
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <InputRadio class="form-check-input" id="psychic-check" Value="@Terrain.PsychicTerrain" />
-                            <label class="form-check-label" for="psychic-check">
-                                @Terrain.PsychicTerrain
-                            </label>
-                        </div>
+                        @foreach (var terrain in Maps.TerrainEffectivenessChart.Keys)
+                        {
+                            <div class="form-check">
+                                <InputRadio class="form-check-input" id="@terrain" Value="terrain" />
+                                <label class="form-check-label" for="@terrain">
+                                    @terrain
+                                </label>
+                            </div>
+                        }
                     </InputRadioGroup>
                 </div>
             </div>
@@ -619,10 +580,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Natures = await PokeService.GetNatures();
-        ItemCollection = await PokeService.GetItemsAsync();
-        PokedexCollection = await PokeService.GetPokedexAsync();
-        MovedexCollection = await PokeService.GetMovesAsync();
+        Natures = await _pokeApiService.GetNatures();
+        ItemCollection = await _pokeApiService.GetItemsAsync();
+        PokedexCollection = await _pokeApiService.GetPokedexAsync();
+        MovedexCollection = await _pokeApiService.GetMovesAsync();
         await SetMoveAsync();
         await SetListsAsync();
         IsReady = true;
@@ -633,7 +594,7 @@
         SetMovesErrors.Clear();
         try
         {
-            _rolls =  DamageHelper.GetDamageRolls(
+            _rolls =  _damageService.GetDamageRolls(
                 _offensivePokemon!,
                 _defensivePokemon!,
                 _move!,
@@ -662,25 +623,6 @@
         }
     }
 
-    private void OnSemiInvulnerabilityToggle()
-    {
-        if (_conditionals.UsedDig)
-        {
-            _conditionals.UsedFly = false;
-            _conditionals.UsedDive = false;
-        }
-        else if (_conditionals.UsedDive)
-        {
-            _conditionals.UsedDig = false;
-            _conditionals.UsedFly = false;
-        }
-        else if (_conditionals.UsedFly)
-        {
-            _conditionals.UsedDig = false;
-            _conditionals.UsedDive = false;
-        }
-    }
-
     private void OnTeraToggle()
     {
         if (!(_conditionals.IsOffensivePokemonTera || _offensivePokemon == null))
@@ -703,7 +645,7 @@
         }
         if (MovedexCollection.Any(x => x.Equals(_moveName, StringComparison.CurrentCultureIgnoreCase)))
         {
-            _move = await PokeService.GetMoveAsync(_moveName);
+            _move = await _pokeApiService.GetMoveAsync(_moveName);
             if (_move == null)
             {
                 return;
@@ -782,6 +724,7 @@
         _offensivePokemon!.UpdateForm(_offensivePokemonList[FormIndicies.Offensive]);
         _offensivePokemon.CurrentHP = _offensivePokemon.HP;
         SetOffensiveAbilities();
+        UpdateOffensiveAbilityAsync();
     }
 
     private void UpdateDefensiveForm()
@@ -789,17 +732,18 @@
         _defensivePokemon!.UpdateForm(_defensivePokemonList[FormIndicies.Defensive]);
         _defensivePokemon.CurrentHP = _defensivePokemon.HP;
         SetDefensiveAbilities();
+        UpdateDefensiveAbilityAsync();
     }
 
     private async Task UpdateOffensiveNatureAsync()
     {
-        var offensiveNature = await PokeService.GetNatureAsync(Natures[NatureIndicies.Offensive]);
+        var offensiveNature = await _pokeApiService.GetNatureAsync(Natures[NatureIndicies.Offensive]);
         _offensivePokemon!.UpdateNature(offensiveNature);
     }
 
     private async Task UpdateDefensiveNatureAsync()
     {
-        var defensiveNature = await PokeService.GetNatureAsync(Natures[NatureIndicies.Defensive]);
+        var defensiveNature = await _pokeApiService.GetNatureAsync(Natures[NatureIndicies.Defensive]);
         _defensivePokemon!.UpdateNature(defensiveNature);
     }
 
@@ -822,7 +766,7 @@
 
     private void UpdateDefensiveAbilityAsync()
     {
-        _defensivePokemon!.Ability = _offensiveAbilityList[Abilities.Defensive].Ability.Name;
+        _defensivePokemon!.Ability = _defensiveAbilityList[Abilities.Defensive].Ability.Name;
     }
 
     private void UpdateOffensiveItemAsync()
@@ -855,7 +799,7 @@
         FormIndicies.Offensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Offensive, StringComparison.CurrentCultureIgnoreCase)))
         {
-            _offensivePokemonList = await PokeService.GetPokemonAsync(Names.Offensive);
+            _offensivePokemonList = await _pokeApiService.GetPokemonAsync(Names.Offensive);
             return true;
         }
         else
@@ -875,7 +819,7 @@
         FormIndicies.Defensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Defensive, StringComparison.CurrentCultureIgnoreCase)))
         {
-            _defensivePokemonList = await PokeService.GetPokemonAsync(Names.Defensive);
+            _defensivePokemonList = await _pokeApiService.GetPokemonAsync(Names.Defensive);
             return true;
         }
         else
@@ -913,7 +857,7 @@
 
     private async Task<StattedPokemon> GetStattedPokemonAsync(List<Pokemon> formList, int natureIndex, int formIndex, int level)
     {
-        var nature = await PokeService.GetNatureAsync(Natures[natureIndex]);
+        var nature = await _pokeApiService.GetNatureAsync(Natures[natureIndex]);
         var pokemon = new StattedPokemon(formList[formIndex], nature)
         {
             Level = level,

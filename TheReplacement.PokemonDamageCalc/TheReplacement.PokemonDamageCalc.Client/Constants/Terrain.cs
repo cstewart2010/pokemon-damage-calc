@@ -10,45 +10,5 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
         public const string GrassyTerrain = "Grassy Terrain";
         public const string PsychicTerrain = "Psychic Terrain";
         public const string MisttyTerrain = "Misty Terrain";
-
-        public static readonly ReadOnlyDictionary<string, TerrainEffectiveness> EffectivenessChart;
-
-        static Terrain()
-        {
-            var dictionary = new Dictionary<string, TerrainEffectiveness>
-            {
-                { None, new TerrainEffectiveness
-                {
-                    BoostedOffensiveTypes = [],
-                    WeakenedOffensiveTypes = [],
-                    AdditionalBoostedMoves = []
-                } },
-                { ElectricTerrain, new TerrainEffectiveness
-                {
-                    BoostedOffensiveTypes = [Types.Electric],
-                    WeakenedOffensiveTypes = [],
-                    AdditionalBoostedMoves = [Moves.Psyblade]
-                } },
-                { GrassyTerrain, new TerrainEffectiveness
-                {
-                    BoostedOffensiveTypes = [Types.Grass],
-                    WeakenedOffensiveTypes = [Types.Ground],
-                    AdditionalBoostedMoves = []
-                } },
-                { PsychicTerrain, new TerrainEffectiveness
-                {
-                    BoostedOffensiveTypes = [Types.Psychic],
-                    WeakenedOffensiveTypes = [],
-                    AdditionalBoostedMoves = []
-                } },
-                { MisttyTerrain, new TerrainEffectiveness
-                {
-                    BoostedOffensiveTypes = [],
-                    WeakenedOffensiveTypes = [Types.Dragon],
-                    AdditionalBoostedMoves = []
-                } },
-            };
-            EffectivenessChart = dictionary.AsReadOnly();
-        }
     }
 }

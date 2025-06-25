@@ -1,4 +1,5 @@
 using TheReplacement.PokemonDamageCalc.Client.Pages;
+using TheReplacement.PokemonDamageCalc.Client.Services;
 using TheReplacement.PokemonDamageCalc.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+builder.Services.AddTransient<IStatService, StatService>();
+builder.Services.AddSingleton<IDamageService, DamageService>();
+builder.Services.AddSingleton<IPokeApiService, PokeApiService>();
 
 var app = builder.Build();
 
