@@ -27,7 +27,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
                 {
                     BoostedOffensiveTypes = [Types.Electric],
                     WeakenedOffensiveTypes = [],
-                    AdditionalBoostedMoves = [MoveNames.Psyblade]
+                    AdditionalBoostedMoves = [Moves.Psyblade]
                 } },
                 { GrassyTerrain, new TerrainEffectiveness
                 {

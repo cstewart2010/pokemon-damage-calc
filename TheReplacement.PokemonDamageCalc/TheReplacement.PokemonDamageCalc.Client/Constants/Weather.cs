@@ -29,7 +29,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Constants
                     BoostedOffensiveTypes = [Types.Fire],
                     BoostedDefensiveTypes = [],
                     WeakenedOffensiveTypes = [Types.Water],
-                    AdditionalBoostedMoves = [MoveNames.HydroSteam]
+                    AdditionalBoostedMoves = [Moves.HydroSteam]
                 } },
                 { Rain, new WeatherEffectiveness
                 {

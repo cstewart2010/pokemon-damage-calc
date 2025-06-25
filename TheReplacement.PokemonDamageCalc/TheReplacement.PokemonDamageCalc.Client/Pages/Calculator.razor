@@ -61,9 +61,17 @@
                     }
                 }
             </InputSelect>
+            <span class="input-group-text">Held Item</span>
+            <input class="form-control" list="offensiveItem" placeholder="Type to search..." @bind-value="Items.Offensive" @bind-value:after="UpdateOffensiveItemAsync" />
+            <datalist id="offensiveItem">
+                @for (var index = 0; index < ItemCollection.Count; index++)
+                {
+                    <option value="@ItemCollection[index].Name.ToCapitalized()">@ItemCollection[index].Name.ToCapitalized()</option>
+                }
+            </datalist>
         </div>
         <div class="input-group">
-            <span class="input-group-text">Offensive Pokemon</span>
+            <span class="input-group-text">Defensive Pokemon</span>
             <InputSelect class="form-select" @bind-Value="FormIndicies.Defensive" @bind-Value:after="UpdateDefensiveForm">
                 @for (var index = 0; index < _defensivePokemonList.Count; index++)
                 {
@@ -93,6 +101,14 @@
                     }
                 }
             </InputSelect>
+            <span class="input-group-text">Held Item</span>
+            <input class="form-control" list="defensiveItem" placeholder="Type to search..." @bind-value="Items.Defensive" @bind-value:after="UpdateDefensiveItemAsync" />
+            <datalist id="defensiveItem">
+                @for (var index = 0; index < ItemCollection.Count; index++)
+                {
+                    <option value="@ItemCollection[index].Name.ToCapitalized()">@ItemCollection[index].Name.ToCapitalized()</option>
+                }
+            </datalist>
         </div>
         <div class="row text-center border border-dark">
             <div class="col">Name</div>
@@ -105,7 +121,7 @@
         </div>
         <div class="row text-center border border-dark border-top-0">
             <div class="col">@_offensivePokemon.Species.ToCapitalized() (@string.Join("/", _offensivePokemon.Types.Select(x => x.ToCapitalized())))</div>
-            <div class="col border-dark border-start">@_offensivePokemon.HP</div>
+            <input class="col border-dark border-start form-control" type="number" min="0" max="@_offensivePokemon.HP" @bind-value="_offensivePokemon.CurrentHP" />
             <div class="col border-dark border-start">@_offensivePokemon.Attack</div>
             <div class="col border-dark border-start">@_offensivePokemon.Defense</div>
             <div class="col border-dark border-start">@_offensivePokemon.SpecialAttack</div>
@@ -151,7 +167,7 @@
         </div>
         <div class="row text-center border border-dark border-top-0">
             <div class="col">@_defensivePokemon.Species.ToCapitalized() (@string.Join("/", _defensivePokemon.Types.Select(x => x.ToCapitalized())))</div>
-            <div class="col border-dark border-start">@_defensivePokemon.HP</div>
+            <input class="col border-dark border-start form-control" type="number" min="0" max="@_defensivePokemon.HP" @bind-value="_defensivePokemon.CurrentHP" />
             <div class="col border-dark border-start">@_defensivePokemon.Attack</div>
             <div class="col border-dark border-start">@_defensivePokemon.Defense</div>
             <div class="col border-dark border-start">@_defensivePokemon.SpecialAttack</div>
@@ -211,21 +227,107 @@
                 <div class="col">@_move.Name.ToCapitalized()</div>
                 <div class="col border-dark border-start">@_move.Type.Name.ToCapitalized()</div>
                 <div class="col border-dark border-start">@_move.DamageClass.Name.ToCapitalized()</div>
-                <div class="col border-dark border-start">@_move.FlavorTextEntries.First(x => x.Language.Name == "en" && x.VersionGroup.Name == "scarlet-violet").FlavorText</div>
-                <div class="col border-dark border-start">@_move.Power</div>
+                <div class="col border-dark border-start">@_flavorText</div>
+                <div class="col border-dark border-start">@_damage</div>
                 <div class="col border-dark border-start">@_move.Accuracy</div>
             </div>
             <div class="h3">Damage Rolls</div>
-            <div class="form-check form-switch">
-                <InputCheckbox class="form-check-input" id="critical-check" @bind-Value="_isCritical" />
-                <label class="form-check-label" for="critical-check">
-                    Critical?
-                </label>
+            <div class="row">
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="critical-check" @bind-Value="_conditionals.IsCriticalHit" />
+                    <label class="form-check-label" for="critical-check">
+                        Critical?
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="missed-check" @bind-Value="_conditionals.LastMoveMissed" />
+                    <label class="form-check-label" for="missed-check">
+                        Did the last move miss?
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="glaive-rush-check" @bind-Value="_conditionals.AfterGlaiveRush" />
+                    <label class="form-check-label" for="glaive-rush-check">
+                        Did the defending pokemon use Glaive Rush?
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="minimized-check" @bind-Value="_conditionals.IsMinimized" />
+                    <label class="form-check-label" for="minimized-check">
+                        Is the defending pokemon minimized
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="laser-check" @bind-Value="_conditionals.IsLaserFocus" />
+                    <label class="form-check-label" for="laser-check">
+                        Is the defending pokemon under Laser Focus
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="dig-check" @bind-Value="_conditionals.UsedDig" @bind-Value:after="OnSemiInvulnerabilityToggle" />
+                    <label class="form-check-label" for="dig-check">
+                        Did defending pokemon use Dig
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="dive-check" @bind-Value="_conditionals.UsedDive" @bind-Value:after="OnSemiInvulnerabilityToggle" />
+                    <label class="form-check-label" for="dive-check">
+                        Did defending pokemon use Dive
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="fly-check" @bind-Value="_conditionals.UsedFly" @bind-Value:after="OnSemiInvulnerabilityToggle" />
+                    <label class="form-check-label" for="fly-check">
+                        Did defending pokemon use Fly
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="reflect-check" @bind-Value="_conditionals.UsedReflect" />
+                    <label class="form-check-label" for="reflect-check">
+                        Is the defending pokemon under Reflect
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="light-screen-check" @bind-Value="_conditionals.UsedLightScreen" />
+                    <label class="form-check-label" for="light-screen-check">
+                        Is the defending pokemon under Light Screen
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="aurora-veil-check" @bind-Value="_conditionals.UsedAuroraVeil" />
+                    <label class="form-check-label" for="aurora-veil-check">
+                        Is the defending pokemon under Aurora Veil
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="friend-guard-check" @bind-Value="_conditionals.IsFriendGuarded" @bind-Value:after="OnTagToggle" />
+                    <label class="form-check-label" for="friend-guard-check">
+                        Is the defending pokemon under Friend Guard
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="tag-check" @bind-Value="_conditionals.IsTagBattle" @bind-Value:after="OnTagToggle" />
+                    <label class="form-check-label" for="tag-check">
+                        Is the defending pokemon in a tag battle
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="protect-check" @bind-Value="_conditionals.ProtectActive" />
+                    <label class="form-check-label" for="protect-check">
+                        Is the defending pokemon under Protect
+                    </label>
+                </div>
+                <div class="col-lg-2 form-check form-switch">
+                    <InputCheckbox class="form-check-input" id="sub-check" @bind-Value="_conditionals.SubstituteActive" />
+                    <label class="form-check-label" for="sub-check">
+                        Is the defending pokemon under Substitute
+                    </label>
+                </div>
             </div>
             <div class="row">
                 <div class="col-6 col-md-3 col-lg-2">
                     <div class="h4">Status condition for @_offensivePokemon.Species.ToCapitalized()</div>
-                    <InputRadioGroup @bind-Value="_offensiveStatusCondition">
+                    <InputRadioGroup @bind-Value="StatusConditions.Offensive">
                         <div class="form-check">
                             <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" />
                             <label class="form-check-label" for="healthy-check">
@@ -242,6 +344,12 @@
                             <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" />
                             <label class="form-check-label" for="poisoned-check">
                                 @Statuses.Poisoned
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="badly-poisoned-check" Value="@Statuses.BadlyPoisoned" />
+                            <label class="form-check-label" for="badly-poisoned-check">
+                                @Statuses.BadlyPoisoned
                             </label>
                         </div>
                         <div class="form-check">
@@ -254,7 +362,7 @@
                 </div>
                 <div class="col-6 col-md-3 col-lg-2">
                     <div class="h4">Status condition for @_defensivePokemon.Species.ToCapitalized()</div>
-                    <InputRadioGroup @bind-Value="_defensiveStatusCondition">
+                    <InputRadioGroup @bind-Value="StatusConditions.Defensive">
                         <div class="form-check">
                             <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" />
                             <label class="form-check-label" for="healthy-check">
@@ -271,6 +379,12 @@
                             <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" />
                             <label class="form-check-label" for="poisoned-check">
                                 @Statuses.Poisoned
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio class="form-check-input" id="badly-poisoned-check" Value="@Statuses.BadlyPoisoned" />
+                            <label class="form-check-label" for="badly-poisoned-check">
+                                @Statuses.BadlyPoisoned
                             </label>
                         </div>
                         <div class="form-check">
@@ -398,30 +512,34 @@
 }
 
 @code {
-    private StringPair Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" };
+    private StringPair Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
+        StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
+        Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" };
     private IntPair NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
         Levels = new IntPair { Offensive = 100, Defensive = 100 },
         FormIndicies = new(),
         Abilities = new();
     private List<NamedApiResource<Nature>> Natures = [];
-    private List<string> PokedexCollection = [];
-    private List<string> MovedexCollection = [];
+    private List<NamedApiResource<Item>> ItemCollection = [];
+    private List<string> PokedexCollection = [], MovedexCollection = [];
     private string _moveName = "Blizzard";
     private ICollection<string> SetListsErrors = [], SetPokemonErrors = [], SetMovesErrors = [];
-    private string _offensiveStatusCondition = Statuses.Healthy,
-        _defensiveStatusCondition = Statuses.Healthy,
-        _weather = Weather.Hail,
+    private string _weather = Weather.Hail,
         _terrain = Terrain.None;
     private Move? _move;
     private List<Pokemon> _offensivePokemonList = [], _defensivePokemonList = [];
     private List<PokemonAbility> _offensiveAbilityList = [], _defensiveAbilityList = [];
-    private bool IsReady, _isCritical;
+    private bool IsReady;
+    private Conditionals _conditionals = new Conditionals();
     private StattedPokemon? _offensivePokemon, _defensivePokemon;
     private IEnumerable<DamageRoll> _rolls = [];
+    private string? _flavorText;
+    private object? _damage;
 
     protected override async Task OnInitializedAsync()
     {
         Natures = await PokeService.GetNatures();
+        ItemCollection = await PokeService.GetItemsAsync();
         PokedexCollection = await PokeService.GetPokedexAsync();
         MovedexCollection = await PokeService.GetMovesAsync();
         await SetMoveAsync();
@@ -438,13 +556,13 @@
                 _offensivePokemon!,
                 _defensivePokemon!,
                 _move!,
-                _isCritical,
-                _offensiveStatusCondition,
+                _conditionals,
+                StatusConditions,
                 _weather,
                 _terrain);
 
-            var lowRoll = (_rolls.FirstOrDefault()?.Damage ?? 0) / _defensivePokemon!.HP * 100;
-            var highRoll = (_rolls.LastOrDefault()?.Damage ?? 0) / _defensivePokemon!.HP * 100;
+            var lowRoll = (_rolls.FirstOrDefault()?.Damage ?? 0) / _defensivePokemon!.CurrentHP * 100;
+            var highRoll = (_rolls.LastOrDefault()?.Damage ?? 0) / _defensivePokemon!.CurrentHP * 100;
             return $"{Math.Floor(lowRoll * 10) / 10} - {Math.Floor(highRoll * 10) / 10}%";
         }
         catch (Exception ex)
@@ -452,6 +570,33 @@
             SetMovesErrors.Add(ex.ToString());
             _rolls = [];
             return string.Empty;
+        }
+    }
+
+    private void OnTagToggle()
+    {
+        if (!_conditionals.IsTagBattle)
+        {
+            _conditionals.IsFriendGuarded = false;
+        }
+    }
+
+    private void OnSemiInvulnerabilityToggle()
+    {
+        if (_conditionals.UsedDig)
+        {
+            _conditionals.UsedFly = false;
+            _conditionals.UsedDive = false;
+        }
+        else if (_conditionals.UsedDive)
+        {
+            _conditionals.UsedDig = false;
+            _conditionals.UsedFly = false;
+        }
+        else if (_conditionals.UsedFly)
+        {
+            _conditionals.UsedDig = false;
+            _conditionals.UsedDive = false;
         }
     }
 
@@ -466,6 +611,23 @@
         if (MovedexCollection.Any(x => x.Equals(_moveName, StringComparison.CurrentCultureIgnoreCase)))
         {
             _move = await PokeService.GetMoveAsync(_moveName);
+            if (_move == null)
+            {
+                return;
+            }
+            _flavorText = _move.FlavorTextEntries.FirstOrDefault(x => x.Language.Name == "en" && x.VersionGroup.Name == "scarlet-violet")?.FlavorText ?? "Not present in Scarlet/Violet";
+            if (_move.DamageClass.Name == DamageClasses.Status)
+            {
+                _damage = "0";
+            }
+            else if (_move.Power == null)
+            {
+                _damage = "Variable";
+            }
+            else
+            {
+                _damage = _move.Power;
+            }
         }
         else
         {
@@ -523,12 +685,14 @@
     private void UpdateOffensiveForm()
     {
         _offensivePokemon!.UpdateForm(_offensivePokemonList[FormIndicies.Offensive]);
+        _offensivePokemon.CurrentHP = _offensivePokemon.HP;
         SetOffensiveAbilities();
     }
 
     private void UpdateDefensiveForm()
     {
         _defensivePokemon!.UpdateForm(_defensivePokemonList[FormIndicies.Defensive]);
+        _defensivePokemon.CurrentHP = _defensivePokemon.HP;
         SetDefensiveAbilities();
     }
 
@@ -547,11 +711,13 @@
     private void UpdateOffensiveLevel()
     {
         _offensivePokemon!.Level = Levels.Offensive;
+        _offensivePokemon.CurrentHP = _offensivePokemon.HP;
     }
 
     private void UpdateDefensiveLevel()
     {
         _defensivePokemon!.Level = Levels.Defensive;
+        _defensivePokemon.CurrentHP = _defensivePokemon.HP;
     }
 
     private void UpdateOffensiveAbilityAsync()
@@ -562,6 +728,16 @@
     private void UpdateDefensiveAbilityAsync()
     {
         _defensivePokemon!.Ability = _offensiveAbilityList[Abilities.Defensive].Ability.Name;
+    }
+
+    private void UpdateOffensiveItemAsync()
+    {
+        _offensivePokemon!.HeldItem = Items.Offensive.ToLowerCaseKebab();
+    }
+
+    private void UpdateDefensiveItemAsync()
+    {
+        _defensivePokemon!.HeldItem = Items.Defensive.ToLowerCaseKebab();
     }
 
     public async Task<bool> TrySetOffensiveFormsAsync()
@@ -648,6 +824,7 @@
         pokemon.IVs.SpecialAttack = 31;
         pokemon.IVs.SpecialDefense = 31;
         pokemon.IVs.Speed = 31;
+        pokemon.CurrentHP = pokemon.HP;
 
         return pokemon;
     }

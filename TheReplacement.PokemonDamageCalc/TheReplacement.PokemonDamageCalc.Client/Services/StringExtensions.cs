@@ -7,6 +7,11 @@
             return string.Join(" ", str.Split('-').Select(x => x.ToCapitalizedInternal()));
         }
 
+        public static string ToLowerCaseKebab(this string str)
+        {
+            return string.Join("-", str.ToLower().Split(' '));
+        }
+
         private static string ToCapitalizedInternal(this string str)
         {
             if (str == null) throw new ArgumentNullException(nameof(str));

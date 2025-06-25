@@ -2,6 +2,7 @@
 {
     public static class Statuses
     {
+        public const string BadlyPoisoned = "BadlyPoisoned";
         public const string Burn = "Burn";
         public const string Poisoned = "Poisoned";
         public const string Paralyzed = "Paralyzed";

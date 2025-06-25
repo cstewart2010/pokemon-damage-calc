@@ -51,6 +51,12 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return list.Results.Select(x => x.Name.ToCapitalized()).ToList();
         }
 
+        public static async Task<List<NamedApiResource<Item>>> GetItemsAsync()
+        {
+            var list = await Client.GetNamedResourcePageAsync<Item>(3000, 0);
+            return list.Results;
+        }
+
         public static async Task<List<NamedApiResource<Nature>>> GetNatures()
         {
             var list = await Client.GetNamedResourcePageAsync<Nature>(30, 0);

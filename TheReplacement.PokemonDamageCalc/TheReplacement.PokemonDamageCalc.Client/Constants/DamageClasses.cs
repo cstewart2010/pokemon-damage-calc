@@ -4,5 +4,6 @@
     {
         public const string Physical = "physical";
         public const string Special = "special";
+        public const string Status = "status";
     }
 }

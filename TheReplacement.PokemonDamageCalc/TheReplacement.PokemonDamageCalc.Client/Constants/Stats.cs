@@ -1,6 +1,6 @@
 ﻿namespace TheReplacement.PokemonDamageCalc.Client.Constants
 {
-    public static class StatNames
+    public static class Stats
     {
         public const string HP = "hp";
         public const string Attack = "attack";
