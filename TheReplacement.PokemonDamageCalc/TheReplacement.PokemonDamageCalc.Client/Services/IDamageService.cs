@@ -1,14 +1,14 @@
-﻿using PokeApiNet;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Services
 {
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+
     public interface IDamageService
     {
         public IEnumerable<DamageRoll> GetDamageRolls(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             Conditionals conditionals,
             StringPair statusConditions,
             string weather,

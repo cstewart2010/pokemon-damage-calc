@@ -2,7 +2,8 @@
 {
     public static class MoveTargets
     {
-        public const string AllOpponents = "all-opponents";
-        public const string AllOtherPokemon = "all-other-pokemon";
+        public const string
+            AllOpponents = "all-opponents",
+            AllOtherPokemon = "all-other-pokemon";
     }
 }

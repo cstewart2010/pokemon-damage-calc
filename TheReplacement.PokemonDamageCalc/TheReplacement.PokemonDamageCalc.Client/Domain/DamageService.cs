@@ -1,30 +1,24 @@
-﻿using PokeApiNet;
-using TheReplacement.PokemonDamageCalc.Client.Constants;
-using TheReplacement.PokemonDamageCalc.Client.DataModel;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Domain
 {
-    public class DamageService : IDamageService
+    using TheReplacement.PokemonDamageCalc.Client.Constants;
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+    using TheReplacement.PokemonDamageCalc.Client.DTOs;
+    using TheReplacement.PokemonDamageCalc.Client.Services;
+
+    public class DamageService(IStatService statService) : IDamageService
     {
-        private readonly IStatService _statService;
-
-        public DamageService(IStatService statService)
-        {
-            _statService = statService;
-        }
-
         public IEnumerable<DamageRoll> GetDamageRolls(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             Conditionals conditionals,
             StringPair statusConditions,
             string weather,
             string terrain)
         {
             conditionals.IsCriticalHit = conditionals.IsCriticalHit && (!Collections.IgnoreCriticals.Contains(defensivePokemon.Ability) || Collections.IgnoreAbilities.Contains(offensivePokemon.Ability));
-            var typeEffectivenessMultiplier = GetTypeEffectivenessMultiplier(move.Type.Name, defensivePokemon);
-            var (attack, defense) = GetStats(_statService, offensivePokemon, defensivePokemon, move, conditionals.IsCriticalHit);
+            var typeEffectivenessMultiplier = GetTypeEffectivenessMultiplier(move.Type, defensivePokemon);
+            var (attack, defense) = GetStats(statService, offensivePokemon, defensivePokemon, move, conditionals.IsCriticalHit);
             var skipDamage = SkipDamageCalculation(
                 offensivePokemon,
                 defensivePokemon,
@@ -78,7 +72,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static bool SkipDamageCalculation(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             Conditionals conditionals,
             double attack,
             double typeEffectivenessMultiplier)
@@ -97,7 +91,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static int? GetTrueDamage(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move)
+            MoveData move)
         {
             if (Maps.TrueDamageMap.TryGetValue(move.Name, out var func))
             {
@@ -111,7 +105,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             IStatService statService,
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             bool isCritical)
         {
             double attack = 0, defense = 0;
@@ -129,7 +123,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             {
                 attackMultiplier *= itemMultiplier;
             }
-            if (move.DamageClass.Name == DamageClasses.Physical)
+            if (move.DamageClass == DamageClasses.Physical)
             {
                 var offensiveAttack = statService.GetAttack(isCritical, defensivePokemon.Ability == Abilities.Unaware, offensivePokemon) * attackMultiplier;
                 var offensiveDefense = statService.GetDefenseForBodyPress(isCritical, defensivePokemon.Ability == Abilities.Unaware, offensivePokemon);
@@ -140,7 +134,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
                         : offensiveAttack;
                 defense = statService.GetDefense(isCritical, offensivePokemon.Ability == Abilities.Unaware || move.Name == Moves.SacredSword, defensivePokemon);
             }
-            else if (move.DamageClass.Name == DamageClasses.Special)
+            else if (move.DamageClass == DamageClasses.Special)
             {
                 attack = statService.GetSpecialAttack(isCritical, defensivePokemon.Ability == Abilities.Unaware, offensivePokemon) * attackMultiplier;
                 defense = Collections.SpecialMovesThatDoPhysicalDamage.Contains(move.Name)
@@ -155,7 +149,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
             string weather,
-            Move move)
+            MoveData move)
         {
             var offensiveMultiplier = GetWeatherMultiplier(offensivePokemon, defensivePokemon, weather, move);
             var defensiveMultiplier = GetWeatherDefenseMultiplier(offensivePokemon, defensivePokemon, weather, move);
@@ -166,7 +160,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
             string weather,
-            Move move)
+            MoveData move)
         {
             double multiplier = 1;
             if (Collections.IgnoreWeather.Contains(offensivePokemon.Ability) || Collections.IgnoreWeather.Contains(defensivePokemon.Ability))
@@ -176,8 +170,8 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             var effectiveness = Maps.WeatherEffectivenessChart[weather];
             var isBoostDefense = false;
             var checkForBoostedDefense =
-                (weather == Weather.Hail && move.DamageClass.Name == DamageClasses.Physical) ||
-                (weather == Weather.Sandstorm && move.DamageClass.Name == DamageClasses.Special);
+                (weather == Weather.Hail && move.DamageClass == DamageClasses.Physical) ||
+                (weather == Weather.Sandstorm && move.DamageClass == DamageClasses.Special);
             var types = GetPokemonTypes(defensivePokemon);
             if (checkForBoostedDefense)
             {
@@ -194,10 +188,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static int GetMovePower(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move)
+            MoveData move)
         {
             // todo: move power boosting items
-            var power = move.Power;
+            var power = move.BasePower;
             if (Maps.ConditionalMovePowerMap.TryGetValue(move.Name, out var powerFunction))
             {
                 power = powerFunction(offensivePokemon, defensivePokemon, move);
@@ -215,9 +209,9 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
 
         private static double GetTargetsMultiplier(
             Conditionals conditionals,
-            Move move)
+            MoveData move)
         {
-            if (Collections.MultiTargetMoves.Contains(move.Target.Name) && conditionals.IsTagBattle)
+            if (Collections.MultiTargetMoves.Contains(move.Target) && conditionals.IsTagBattle)
             {
                 return 0.75;
             }
@@ -229,7 +223,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
             string weather,
-            Move move)
+            MoveData move)
         {
             double multiplier = 1;
             if (Collections.IgnoreWeather.Contains(offensivePokemon.Ability) || Collections.IgnoreWeather.Contains(defensivePokemon.Ability))
@@ -238,11 +232,11 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             }
             var effectiveness = Maps.WeatherEffectivenessChart[weather];
             var isBoostMove = effectiveness.AdditionalBoostedMoves.Contains(move.Name);
-            if (effectiveness.BoostedOffensiveTypes.Contains(move.Type.Name) || isBoostMove)
+            if (effectiveness.BoostedOffensiveTypes.Contains(move.Type) || isBoostMove)
             {
                 multiplier = 1.5;
             }
-            else if (effectiveness.WeakenedOffensiveTypes.Contains(move.Type.Name))
+            else if (effectiveness.WeakenedOffensiveTypes.Contains(move.Type))
             {
                 multiplier = 0.5;
             }
@@ -253,7 +247,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static double GetCriticalMuliplier(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             string defensiveStatusCondition,
             Conditionals conditionals)
         {
@@ -275,7 +269,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
 
         private static bool IsGuaranteedCritical(
             StattedPokemon offensivePokemon,
-            Move move,
+            MoveData move,
             string defensiveStatusCondition,
             bool isLaserFocus)
         {
@@ -287,7 +281,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
         private static double GetOtherMultiplier(
             StattedPokemon offensivePokemon,
             StattedPokemon defensivePokemon,
-            Move move,
+            MoveData move,
             Conditionals conditionals,
             double typeEffectivenessMultiplier)
         {
@@ -318,11 +312,11 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
                     return 0;
                 }
             }
-            if ((conditionals.UsedReflect || conditionals.UsedAuroraVeil) && move.DamageClass.Name == DamageClasses.Physical)
+            if ((conditionals.UsedReflect || conditionals.UsedAuroraVeil) && move.DamageClass == DamageClasses.Physical)
             {
                 multiplier /= 2;
             }
-            if ((conditionals.UsedLightScreen || conditionals.UsedAuroraVeil) && move.DamageClass.Name == DamageClasses.Special)
+            if ((conditionals.UsedLightScreen || conditionals.UsedAuroraVeil) && move.DamageClass == DamageClasses.Special)
             {
                 multiplier /= 2;
             }
@@ -347,7 +341,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             {
                 multiplier *= 1.3;
             }
-            if (defensivePokemon.Ability == Abilities.IceScales && move.DamageClass.Name == DamageClasses.Special)
+            if (defensivePokemon.Ability == Abilities.IceScales && move.DamageClass == DamageClasses.Special)
             {
                 multiplier /= 2;
             }
@@ -371,11 +365,11 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             {
                 multiplier *= 2;
             }
-            if (defensivePokemon.Ability == Abilities.Fluffy && move.Type.Name == Types.Fire)
+            if (defensivePokemon.Ability == Abilities.Fluffy && move.Type == Types.Fire)
             {
                 multiplier *= 2;
             }
-            if (typeEffectivenessMultiplier > 1 && Maps.TypeResistantBerryItemMap.TryGetValue(defensivePokemon.HeldItem, out var berryResistantType) && move.Type.Name == berryResistantType)
+            if (typeEffectivenessMultiplier > 1 && Maps.TypeResistantBerryItemMap.TryGetValue(defensivePokemon.HeldItem, out var berryResistantType) && move.Type == berryResistantType)
             {
                 if (defensivePokemon.Ability == Abilities.Ripen)
                 {
@@ -418,10 +412,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return 1;
         }
 
-        private static double GetStab(StattedPokemon offendingPokemon, Move move)
+        private static double GetStab(StattedPokemon offendingPokemon, MoveData move)
         {
             var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);
-            if (types.Contains(move.Type.Name) || IsSteelWorker(offendingPokemon, move))
+            if (types.Contains(move.Type) || IsSteelWorker(offendingPokemon, move))
             {
                 if (offendingPokemon.Ability == Abilities.Adaptability)
                 {
@@ -434,9 +428,9 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return 1;
         }
 
-        private static bool IsSteelWorker(StattedPokemon offendingPokemon, Move move)
+        private static bool IsSteelWorker(StattedPokemon offendingPokemon, MoveData move)
         {
-            return move.Type.Name == Types.Steel && offendingPokemon.Ability == Abilities.SteelWorker;
+            return move.Type == Types.Steel && offendingPokemon.Ability == Abilities.SteelWorker;
         }
 
         private static double GetTypeEffectivenessMultiplier(string moveTypeName, StattedPokemon defendingPokemon, bool ignoreResistances = false, bool ignoreImmunities = false)
@@ -463,10 +457,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return effectiveness;
         }
 
-        private static double GetStatusMultiplier(StattedPokemon offendingPokemon, Move move, string status)
+        private static double GetStatusMultiplier(StattedPokemon offendingPokemon, MoveData move, string status)
         {
             double statusMultiplier = 1;
-            if (move.DamageClass.Name != DamageClasses.Physical)
+            if (move.DamageClass != DamageClasses.Physical)
             {
                 return statusMultiplier;
             }
@@ -494,7 +488,7 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             return statusMultiplier;
         }
 
-        private static double GetTerrainMultiplier(string terrain, Move move, StattedPokemon offendingPokemon, StattedPokemon defendingPokemon)
+        private static double GetTerrainMultiplier(string terrain, MoveData move, StattedPokemon offendingPokemon, StattedPokemon defendingPokemon)
         {
             double multiplier = 1;
             var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);
@@ -507,11 +501,11 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
             }
             var effectiveness = Maps.TerrainEffectivenessChart[terrain];
             var isBoostMove = effectiveness.AdditionalBoostedMoves.Contains(move.Name);
-            if (effectiveness.BoostedOffensiveTypes.Contains(move.Type.Name) || isBoostMove)
+            if (effectiveness.BoostedOffensiveTypes.Contains(move.Type) || isBoostMove)
             {
                 multiplier = 1.5;
             }
-            else if (effectiveness.WeakenedOffensiveTypes.Contains(move.Type.Name))
+            else if (effectiveness.WeakenedOffensiveTypes.Contains(move.Type))
             {
                 multiplier = 0.5;
             }

@@ -1,10 +1,10 @@
 ﻿@page "/calc"
 @rendermode InteractiveWebAssembly
 @inject IDamageService _damageService;
-@inject IPokeApiService _pokeApiService;
-@using PokeApiNet;
+@inject IPokeService _pokeService;
 @using TheReplacement.PokemonDamageCalc.Client.Constants;
 @using TheReplacement.PokemonDamageCalc.Client.DataModel;
+@using TheReplacement.PokemonDamageCalc.Client.DTOs;
 @using TheReplacement.PokemonDamageCalc.Client.Extensions;
 @using TheReplacement.PokemonDamageCalc.Client.Services;
 
@@ -12,6 +12,7 @@
 <!-- Fix the monolith -->
 @if (IsReady)
 {
+    <!-- SpeciesInput.razor -->
     <div class="input-group">
         <span class="input-group-text">Offensive Pokemon Species</span>
         <input class="form-control" list="offensiveDex" placeholder="Type to search..." @bind-value="Names.Offensive" @bind-value:after="ResetOffensivePokemonAsync" />
@@ -33,12 +34,13 @@
 
     @if (!(_offensivePokemon == null || _defensivePokemon == null))
     {
+        <!-- PokemonForm.razor -->
         <div class="input-group">
             <span class="input-group-text">Offensive Pokemon</span>
             <InputSelect class="form-select" @bind-Value="FormIndicies.Offensive" @bind-Value:after="UpdateOffensiveForm">
                 @for (var index = 0; index < _offensivePokemonList.Count; index++)
                 {
-                    <option value="@index">@_offensivePokemonList[index].Name.ToCapitalized()</option>
+                    <option value="@index">@_offensivePokemonList[index].SpeciesName.ToCapitalized()</option>
                 }
             </InputSelect>
             <span class="input-group-text">Level</span>
@@ -47,7 +49,7 @@
             <InputSelect class="form-select" @bind-Value="NatureIndicies.Offensive" @bind-Value:after="UpdateOffensiveNatureAsync">
                 @for (var index = 0; index < Natures.Count; index++)
                 {
-                    <option value="@index">@Natures[index].Name.ToCapitalized()</option>
+                    <option value="@index">@Natures[index]</option>
                 }
             </InputSelect>
             <span class="input-group-text">Ability</span>
@@ -56,11 +58,11 @@
                 {
                     @if (_offensiveAbilityList[index].IsHidden)
                     {
-                        <option value="@index">@_offensiveAbilityList[index].Ability.Name.ToCapitalized() (Hidden)</option>
+                        <option value="@index">@_offensiveAbilityList[index].Name.ToCapitalized() (Hidden)</option>
                     }
                     else
                     {
-                        <option value="@index">@_offensiveAbilityList[index].Ability.Name.ToCapitalized()</option>
+                        <option value="@index">@_offensiveAbilityList[index].Name.ToCapitalized()</option>
                     }
                 }
             </InputSelect>
@@ -69,7 +71,7 @@
             <datalist id="offensiveItem">
                 @for (var index = 0; index < ItemCollection.Count; index++)
                 {
-                    <option value="@ItemCollection[index].Name.ToCapitalized()">@ItemCollection[index].Name.ToCapitalized()</option>
+                    <option value="@ItemCollection[index]">@ItemCollection[index]</option>
                 }
             </datalist>
             @if (_conditionals.IsOffensivePokemonTera)
@@ -83,12 +85,13 @@
                 </InputSelect>
             }
         </div>
+        <!-- PokemonForm.razor -->
         <div class="input-group">
             <span class="input-group-text">Defensive Pokemon</span>
             <InputSelect class="form-select" @bind-Value="FormIndicies.Defensive" @bind-Value:after="UpdateDefensiveForm">
                 @for (var index = 0; index < _defensivePokemonList.Count; index++)
                 {
-                    <option value="@index">@_defensivePokemonList[index].Name.ToCapitalized()</option>
+                    <option value="@index">@_defensivePokemonList[index].SpeciesName.ToCapitalized()</option>
                 }
             </InputSelect>
             <span class="input-group-text">Level</span>
@@ -97,7 +100,7 @@
             <InputSelect class="form-select" @bind-Value="NatureIndicies.Defensive" @bind-Value:after="UpdateDefensiveNatureAsync">
                 @for (var index = 0; index < Natures.Count; index++)
                 {
-                    <option value="@index">@Natures[index].Name.ToCapitalized()</option>
+                    <option value="@index">@Natures[index]</option>
                 }
             </InputSelect>
             <span class="input-group-text">Ability</span>
@@ -106,11 +109,11 @@
                 {
                     @if (_defensiveAbilityList[index].IsHidden)
                     {
-                        <option value="@index">@_defensiveAbilityList[index].Ability.Name.ToCapitalized() (Hidden)</option>
+                        <option value="@index">@_defensiveAbilityList[index].Name.ToCapitalized() (Hidden)</option>
                     }
                     else
                     {
-                        <option value="@index">@_defensiveAbilityList[index].Ability.Name.ToCapitalized()</option>
+                        <option value="@index">@_defensiveAbilityList[index].Name.ToCapitalized()</option>
                     }
                 }
             </InputSelect>
@@ -119,7 +122,7 @@
             <datalist id="defensiveItem">
                 @for (var index = 0; index < ItemCollection.Count; index++)
                 {
-                    <option value="@ItemCollection[index].Name.ToCapitalized()">@ItemCollection[index].Name.ToCapitalized()</option>
+                    <option value="@ItemCollection[index]">@ItemCollection[index]</option>
                 }
             </datalist>
             @if (_conditionals.IsDefensivePokemonTera)
@@ -133,6 +136,8 @@
                 </InputSelect>
             }
         </div>
+
+        <!-- PokemonStats.razor -->
         <div class="row text-center border border-dark">
             <div class="col">Name</div>
             <div class="col border-dark border-start">HP</div>
@@ -179,6 +184,7 @@
             <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_offensivePokemon.Stages.Speed" />
         </div>
         <br />
+        <!-- PokemonStats.razor -->
         <div class="row text-center border border-dark">
             <div class="col">Name</div>
             <div class="col border-dark border-start">HP</div>
@@ -225,6 +231,7 @@
             <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="_defensivePokemon.Stages.Speed" />
         </div>
         <br />
+        <!-- MoveInput.razor -->
         <div class="input-group">
             <span class="input-group-text">Move</span>
             <input class="form-control" list="moveDex" placeholder="Type to search..." @bind-value="_moveName" @bind-value:after="SetMoveAsync" />
@@ -237,6 +244,7 @@
         </div>
         @if (_move != null)
         {
+            <!-- MoveData.razor -->
             <div class="h3">
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="description-check" @bind-Value="_conditionals.DisplayDescription" />
@@ -255,12 +263,13 @@
             </div>
             <div class="row border border-dark border-top-0" hidden="@(!_conditionals.DisplayDescription)">
                 <div class="col">@_move.Name.ToCapitalized()</div>
-                <div class="col border-dark border-start">@_move.Type.Name.ToCapitalized()</div>
-                <div class="col border-dark border-start">@_move.DamageClass.Name.ToCapitalized()</div>
-                <div class="col border-dark border-start">@_flavorText</div>
+                <div class="col border-dark border-start">@_move.Type.ToCapitalized()</div>
+                <div class="col border-dark border-start">@_move.DamageClass.ToCapitalized()</div>
+                <div class="col border-dark border-start">@_move.FlavorText</div>
                 <div class="col border-dark border-start">@_damage</div>
-                <div class="col border-dark border-start">@_move.Accuracy</div>
+                <div class="col border-dark border-start">@_move</div>
             </div>
+            <!-- ConditionalValues.razor -->
             <div class="h3">
                 <div class="col-lg-2 form-check form-switch">
                     <InputCheckbox class="form-check-input" id="conditions-check" @bind-Value="_conditionals.DisplayConditions" />
@@ -504,6 +513,7 @@
                     </InputRadioGroup>
                 </div>
             </div>
+            <!-- DamageRolls.razor -->
             <div class="h3">Damage Rolls</div>
             <div class="h4">
                 <strong>
@@ -525,6 +535,7 @@
         }
     }
 
+    <!-- ErrorSection.razor -->
     @if (SetListsErrors.Any() || SetPokemonErrors.Any() || SetMovesErrors.Any())
     {
         <div class="h3">Errors</div>
@@ -553,37 +564,49 @@
 }
 
 @code {
-    private StringPair Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
-            StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
-            Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" },
-            Tera = new StringPair();
-    private IntPair NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
+    private StringPair
+        Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
+        StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
+        Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" },
+        Tera = new StringPair();
+    private IntPair
+        NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
         Levels = new IntPair { Offensive = 100, Defensive = 100 },
         FormIndicies = new(),
         Abilities = new();
-    private List<NamedApiResource<Nature>> Natures = [];
-    private List<NamedApiResource<Item>> ItemCollection = [];
-    private List<string> PokedexCollection = [], MovedexCollection = [];
-    private string _moveName = "Blizzard";
-    private ICollection<string> SetListsErrors = [], SetPokemonErrors = [], SetMovesErrors = [];
-    private string _weather = Weather.Hail,
+    private List<string>
+        Natures = [],
+        ItemCollection = [],
+        PokedexCollection = [],
+        MovedexCollection = [];
+    private string
+        _moveName = "Blizzard",
+        _weather = Weather.Hail,
         _terrain = Terrain.None;
-    private Move? _move;
-    private List<Pokemon> _offensivePokemonList = [], _defensivePokemonList = [];
-    private List<PokemonAbility> _offensiveAbilityList = [], _defensiveAbilityList = [];
+    private ICollection<string>
+        SetListsErrors = [],
+        SetPokemonErrors = [],
+        SetMovesErrors = [];
+    private MoveData? _move;
+    private List<RawPokemon>
+        _offensivePokemonList = [],
+        _defensivePokemonList = [];
+    private List<AbilityData>
+        _offensiveAbilityList = [],
+        _defensiveAbilityList = [];
     private bool IsReady;
-    private Conditionals _conditionals = new Conditionals();
-    private StattedPokemon? _offensivePokemon, _defensivePokemon;
-    private IEnumerable<DamageRoll> _rolls = [];
-    private string? _flavorText;
+    private StattedPokemon?
+        _offensivePokemon, _defensivePokemon;
     private object? _damage;
+    private Conditionals _conditionals = new Conditionals();
+    private IEnumerable<DamageRoll> _rolls = [];
 
     protected override async Task OnInitializedAsync()
     {
-        Natures = await _pokeApiService.GetNatures();
-        ItemCollection = await _pokeApiService.GetItemsAsync();
-        PokedexCollection = await _pokeApiService.GetPokedexAsync();
-        MovedexCollection = await _pokeApiService.GetMovesAsync();
+        Natures = await _pokeService.GetNatures();
+        ItemCollection = await _pokeService.GetItemsAsync();
+        PokedexCollection = await _pokeService.GetPokedexAsync();
+        MovedexCollection = await _pokeService.GetMovesAsync();
         await SetMoveAsync();
         await SetListsAsync();
         IsReady = true;
@@ -645,23 +668,22 @@
         }
         if (MovedexCollection.Any(x => x.Equals(_moveName, StringComparison.CurrentCultureIgnoreCase)))
         {
-            _move = await _pokeApiService.GetMoveAsync(_moveName);
+            _move = await _pokeService.GetMoveAsync(_moveName);
             if (_move == null)
             {
                 return;
             }
-            _flavorText = _move.FlavorTextEntries.FirstOrDefault(x => x.Language.Name == "en" && x.VersionGroup.Name == "scarlet-violet")?.FlavorText ?? "Not present in Scarlet/Violet";
-            if (_move.DamageClass.Name == DamageClasses.Status)
+            if (_move.DamageClass == DamageClasses.Status)
             {
                 _damage = "0";
             }
-            else if (_move.Power == null)
+            else if (_move.BasePower == null)
             {
                 _damage = "Variable";
             }
             else
             {
-                _damage = _move.Power;
+                _damage = _move.BasePower;
             }
         }
         else
@@ -737,13 +759,13 @@
 
     private async Task UpdateOffensiveNatureAsync()
     {
-        var offensiveNature = await _pokeApiService.GetNatureAsync(Natures[NatureIndicies.Offensive]);
+        var offensiveNature = await _pokeService.GetNatureAsync(NatureIndicies.Offensive);
         _offensivePokemon!.UpdateNature(offensiveNature);
     }
 
     private async Task UpdateDefensiveNatureAsync()
     {
-        var defensiveNature = await _pokeApiService.GetNatureAsync(Natures[NatureIndicies.Defensive]);
+        var defensiveNature = await _pokeService.GetNatureAsync(NatureIndicies.Defensive);
         _defensivePokemon!.UpdateNature(defensiveNature);
     }
 
@@ -761,12 +783,12 @@
 
     private void UpdateOffensiveAbilityAsync()
     {
-        _offensivePokemon!.Ability = _offensiveAbilityList[Abilities.Offensive].Ability.Name;
+        _offensivePokemon!.Ability = _offensiveAbilityList[Abilities.Offensive].Name;
     }
 
     private void UpdateDefensiveAbilityAsync()
     {
-        _defensivePokemon!.Ability = _defensiveAbilityList[Abilities.Defensive].Ability.Name;
+        _defensivePokemon!.Ability = _defensiveAbilityList[Abilities.Defensive].Name;
     }
 
     private void UpdateOffensiveItemAsync()
@@ -799,7 +821,7 @@
         FormIndicies.Offensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Offensive, StringComparison.CurrentCultureIgnoreCase)))
         {
-            _offensivePokemonList = await _pokeApiService.GetPokemonAsync(Names.Offensive);
+            _offensivePokemonList = await _pokeService.GetPokemonAsync(Names.Offensive);
             return true;
         }
         else
@@ -819,7 +841,7 @@
         FormIndicies.Defensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Defensive, StringComparison.CurrentCultureIgnoreCase)))
         {
-            _defensivePokemonList = await _pokeApiService.GetPokemonAsync(Names.Defensive);
+            _defensivePokemonList = await _pokeService.GetPokemonAsync(Names.Defensive);
             return true;
         }
         else
@@ -839,7 +861,7 @@
         {
             Levels.Offensive = 1;
         }
-        _offensiveAbilityList = _offensivePokemonList[FormIndicies.Offensive].Abilities;
+        _offensiveAbilityList = _offensivePokemonList[FormIndicies.Offensive].Abilities.ToList();
     }
 
     private void SetDefensiveAbilities()
@@ -852,12 +874,12 @@
         {
             Levels.Defensive = 1;
         }
-        _defensiveAbilityList = _defensivePokemonList[FormIndicies.Defensive].Abilities;
+        _defensiveAbilityList = _defensivePokemonList[FormIndicies.Defensive].Abilities.ToList();
     }
 
-    private async Task<StattedPokemon> GetStattedPokemonAsync(List<Pokemon> formList, int natureIndex, int formIndex, int level)
+    private async Task<StattedPokemon> GetStattedPokemonAsync(List<RawPokemon> formList, int natureIndex, int formIndex, int level)
     {
-        var nature = await _pokeApiService.GetNatureAsync(Natures[natureIndex]);
+        var nature = await _pokeService.GetNatureAsync(natureIndex);
         var pokemon = new StattedPokemon(formList[formIndex], nature)
         {
             Level = level,

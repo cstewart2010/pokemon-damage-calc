@@ -1,7 +1,8 @@
-﻿using TheReplacement.PokemonDamageCalc.Client.DataModel;
-
-namespace TheReplacement.PokemonDamageCalc.Client.Services
+﻿namespace TheReplacement.PokemonDamageCalc.Client.Domain
 {
+    using TheReplacement.PokemonDamageCalc.Client.DataModel;
+    using TheReplacement.PokemonDamageCalc.Client.Services;
+
     public class StatService : IStatService
     {
         public double GetAttack(bool isCritical, bool isUnaware, StattedPokemon pokemon)

@@ -2,28 +2,29 @@
 {
     public static class Items
     {
-        public const string BabiriBerry = "babiri-berry";
-        public const string ChartiBerry = "charti-berry";
-        public const string ChilanBerry = "chilan-berry";
-        public const string ChoiceBand = "choice-band";
-        public const string ChoiceSpecs = "choice-specs";
-        public const string ChopleBerry = "chople-berry";
-        public const string CobaBerry = "coba-berry";
-        public const string ColburBerry = "colbur-berry";
-        public const string ExpertBelt = "expert-belt";
-        public const string HabanBerry = "haban-berry";
-        public const string KasibBerry = "kasib-berry";
-        public const string KebiaBerry = "kebia-berry";
-        public const string LifeOrb = "life-orb";
-        public const string OccaBerry = "occa-berry";
-        public const string PasshoBerry = "passho-berry";
-        public const string PayapaBerry = "payapa-berry";
-        public const string RindoBerry = "rindo-berry";
-        public const string RoseliBerry = "roseli-berry";
-        public const string ShucaBerry = "shuca-berry";
-        public const string SilkScarf = "silk-scarf";
-        public const string TangaBerry = "tanga-berry";
-        public const string WacanBerry = "wacan-berry";
-        public const string YacheBerry = "yache-berry";
+        public const string
+            BabiriBerry = "babiri-berry",
+            ChartiBerry = "charti-berry",
+            ChilanBerry = "chilan-berry",
+            ChoiceBand = "choice-band",
+            ChoiceSpecs = "choice-specs",
+            ChopleBerry = "chople-berry",
+            CobaBerry = "coba-berry",
+            ColburBerry = "colbur-berry",
+            ExpertBelt = "expert-belt",
+            HabanBerry = "haban-berry",
+            KasibBerry = "kasib-berry",
+            KebiaBerry = "kebia-berry",
+            LifeOrb = "life-orb",
+            OccaBerry = "occa-berry",
+            PasshoBerry = "passho-berry",
+            PayapaBerry = "payapa-berry",
+            RindoBerry = "rindo-berry",
+            RoseliBerry = "roseli-berry",
+            ShucaBerry = "shuca-berry",
+            SilkScarf = "silk-scarf",
+            TangaBerry = "tanga-berry",
+            WacanBerry = "wacan-berry",
+            YacheBerry = "yache-berry";
     }
 }
