@@ -9,12 +9,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
     public class PokeApiService : IPokeService
     {
         private readonly PokeApiClient _client;
-        private readonly List<NamedApiResource<Nature>> _natures;
 
         public PokeApiService()
         {
             _client = new PokeApiClient();
-            _natures = _client.GetNamedResourcePageAsync<Nature>(30, 0).Result.Results;
         }
 
         public async Task<List<RawPokemon>> GetPokemonAsync(string name)
@@ -69,7 +67,8 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
 
         public async Task<NatureData> GetNatureAsync(int index)
         {
-            var nature = await _client.GetResourceAsync(_natures[index]);
+            var natures = await _client.GetNamedResourcePageAsync<Nature>(30, 0);
+            var nature = await _client.GetResourceAsync(natures.Results[index]);
 
             return new NatureData
             {
@@ -99,9 +98,10 @@ namespace TheReplacement.PokemonDamageCalc.Client.Services
 
         public async Task<List<string>> GetNatures()
         {
+            var natures = await _client.GetNamedResourcePageAsync<Nature>(30, 0);
             return await Task.Run<List<string>>(() =>
             {
-                return [.. _natures.Select(x => x.Name.ToCapitalized())];
+                return [.. natures.Results.Select(x => x.Name.ToCapitalized())];
             });
         }
 
