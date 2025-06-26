@@ -146,33 +146,33 @@
 <div class="row" hidden="@(!_displayConditionals)">
     <div class="col-6 col-md-3 col-lg-2">
         <div class="h4">Status condition for @OffensivePokemon.ToCapitalized()</div>
-        <InputRadioGroup @bind-Value="OffensiveStatusCondition" @oninput="e => OnStringChanged(e, OffensiveStatusConditionChanged)">
+        <InputRadioGroup @bind-Value="OffensiveStatusCondition">
             <div class="form-check">
-                <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" />
+                <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" @oninput="e => OnStringChanged(e, OffensiveStatusConditionChanged)"  />
                 <label class="form-check-label" for="healthy-check">
                     @Statuses.Healthy
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="burn-check" Value="@Statuses.Burn" />
+                <InputRadio class="form-check-input" id="burn-check" Value="@Statuses.Burn" @oninput="e => OnStringChanged(e, OffensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="burn-check">
                     @Statuses.Burn
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" />
+                <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" @oninput="e => OnStringChanged(e, OffensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="poisoned-check">
                     @Statuses.Poisoned
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="badly-poisoned-check" Value="@Statuses.BadlyPoisoned" />
+                <InputRadio class="form-check-input" id="badly-poisoned-check" Value="@Statuses.BadlyPoisoned" @oninput="e => OnStringChanged(e, OffensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="badly-poisoned-check">
                     @Statuses.BadlyPoisoned
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="para-check" Value="@Statuses.Paralyzed" />
+                <InputRadio class="form-check-input" id="para-check" Value="@Statuses.Paralyzed" @oninput="e => OnStringChanged(e, OffensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="para-check">
                     @Statuses.Paralyzed
                 </label>
@@ -181,33 +181,33 @@
     </div>
     <div class="col-6 col-md-3 col-lg-2">
         <div class="h4">Status condition for @DefensivePokemon.ToCapitalized()</div>
-        <InputRadioGroup @bind-Value="DefensiveStatusCondition" @oninput="e => OnStringChanged(e, DefensiveStatusConditionChanged)">
+        <InputRadioGroup @bind-Value="DefensiveStatusCondition">
             <div class="form-check">
-                <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" />
+                <InputRadio class="form-check-input" id="healthy-check" Value="@Statuses.Healthy" @oninput="e => OnStringChanged(e, DefensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="healthy-check">
                     @Statuses.Healthy
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="burn-check" Value="@Statuses.Burn" />
+                <InputRadio class="form-check-input" id="burn-check" Value="@Statuses.Burn" @oninput="e => OnStringChanged(e, DefensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="burn-check">
                     @Statuses.Burn
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" />
+                <InputRadio class="form-check-input" id="poisoned-check" Value="@Statuses.Poisoned" @oninput="e => OnStringChanged(e, DefensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="poisoned-check">
                     @Statuses.Poisoned
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="badly-poisoned-check" Value="@Statuses.BadlyPoisoned" />
+                <InputRadio class="form-check-input" id="badly-poisoned-check" Value="@Statuses.BadlyPoisoned" @oninput="e => OnStringChanged(e, DefensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="badly-poisoned-check">
                     @Statuses.BadlyPoisoned
                 </label>
             </div>
             <div class="form-check">
-                <InputRadio class="form-check-input" id="para-check" Value="@Statuses.Paralyzed" />
+                <InputRadio class="form-check-input" id="para-check" Value="@Statuses.Paralyzed" @oninput="e => OnStringChanged(e, DefensiveStatusConditionChanged)" />
                 <label class="form-check-label" for="para-check">
                     @Statuses.Paralyzed
                 </label>
@@ -216,11 +216,11 @@
     </div>
     <div class="col-6 col-md-3 col-lg-2">
         <div class="h4">Weather</div>
-        <InputRadioGroup @bind-Value="Weather" @oninput="e => OnStringChanged(e, WeatherChanged)">
+        <InputRadioGroup @bind-Value="Weather">
             @foreach (var weather in Maps.WeatherEffectivenessChart.Keys)
             {
                 <div class="form-check">
-                    <InputRadio class="form-check-input" id="@weather" Value="weather" />
+                    <InputRadio class="form-check-input" id="@weather" Value="weather" @oninput="e => OnStringChanged(e, WeatherChanged)" />
                     <label class="form-check-label" for="@weather">
                         @weather
                     </label>
@@ -230,11 +230,11 @@
     </div>
     <div class="col-6 col-md-3 col-lg-2">
         <div class="h4">Terrain</div>
-        <InputRadioGroup @bind-Value="Terrain" @oninput="e => OnStringChanged(e, TerrainChanged)">
+        <InputRadioGroup @bind-Value="Terrain">
             @foreach (var terrain in Maps.TerrainEffectivenessChart.Keys)
             {
                 <div class="form-check">
-                    <InputRadio class="form-check-input" id="@terrain" Value="terrain" />
+                    <InputRadio class="form-check-input" id="@terrain" Value="terrain" @oninput="e => OnStringChanged(e, TerrainChanged)" />
                     <label class="form-check-label" for="@terrain">
                         @terrain
                     </label>
