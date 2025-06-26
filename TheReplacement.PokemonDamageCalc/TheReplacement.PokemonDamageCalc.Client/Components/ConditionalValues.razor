@@ -247,92 +247,92 @@
 @code {
     private bool _displayConditionals = true;
 
-    [Parameter]
-    public required string OffensivePokemon { get; set; }
-    [Parameter]
-    public required string DefensivePokemon { get; set; }
-    [Parameter]
-    public required bool IsCritical { get; set; }
+    [Parameter, EditorRequired]
+    public string OffensivePokemon { get; set; }
+    [Parameter, EditorRequired]
+    public string DefensivePokemon { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsCritical { get; set; }
     [Parameter]
     public EventCallback<bool> IsCriticalChanged { get; set; }
+    [Parameter, EditorRequired]
+    public bool LastMoveMissed { get; set; }
     [Parameter]
-    public required bool LastMoveMissed { get; set; }
-    [Parameter]
-    public required EventCallback<bool> LastMoveMissedChanged { get; set; }
-    [Parameter]
-    public required bool AfterGlaiveRush { get; set; }
+    public EventCallback<bool> LastMoveMissedChanged { get; set; }
+    [Parameter, EditorRequired]
+    public bool AfterGlaiveRush { get; set; }
     [Parameter]
     public EventCallback<bool> AfterGlaiveRushChanged { get; set; }
-    [Parameter]
-    public required bool IsMinimized { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsMinimized { get; set; }
     [Parameter]
     public EventCallback<bool> IsMinimizedChanged { get; set; }
-    [Parameter]
-    public required bool IsLaserFocus { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsLaserFocus { get; set; }
     [Parameter]
     public EventCallback<bool> IsLaserFocusChanged { get; set; }
-    [Parameter]
-    public required bool UsedDig { get; set; }
+    [Parameter, EditorRequired]
+    public bool UsedDig { get; set; }
     [Parameter]
     public EventCallback<bool> UsedDigChanged { get; set; }
-    [Parameter]
-    public required bool UsedDive { get; set; }
+    [Parameter, EditorRequired]
+    public bool UsedDive { get; set; }
     [Parameter]
     public EventCallback<bool> UsedDiveChanged { get; set; }
-    [Parameter]
-    public required bool UsedFly { get; set; }
+    [Parameter, EditorRequired]
+    public bool UsedFly { get; set; }
     [Parameter]
     public EventCallback<bool> UsedFlyChanged { get; set; }
-    [Parameter]
-    public required bool UsedReflect { get; set; }
+    [Parameter, EditorRequired]
+    public bool UsedReflect { get; set; }
     [Parameter]
     public EventCallback<bool> UsedReflectChanged { get; set; }
-    [Parameter]
-    public required bool UsedLightScreen { get; set; }
+    [Parameter, EditorRequired]
+    public bool UsedLightScreen { get; set; }
     [Parameter]
     public EventCallback<bool> UsedLightScreenChanged { get; set; }
-    [Parameter]
-    public required bool UsedAuroraVeil { get; set; }
+    [Parameter, EditorRequired]
+    public bool UsedAuroraVeil { get; set; }
     [Parameter]
     public EventCallback<bool> UsedAuroraVeilChanged { get; set; }
-    [Parameter]
-    public required bool IsTagBattle { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsTagBattle { get; set; }
     [Parameter]
     public EventCallback<bool> IsTagBattleChanged { get; set; }
-    [Parameter]
-    public required bool IsFriendGuarded { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsFriendGuarded { get; set; }
     [Parameter]
     public EventCallback<bool> IsFriendGuardedChanged { get; set; }
-    [Parameter]
-    public required bool ProtectActive { get; set; }
+    [Parameter, EditorRequired]
+    public bool ProtectActive { get; set; }
     [Parameter]
     public EventCallback<bool> ProtectActiveChanged { get; set; }
-    [Parameter]
-    public required bool SubstituteActive { get; set; }
+    [Parameter, EditorRequired]
+    public bool SubstituteActive { get; set; }
     [Parameter]
     public EventCallback<bool> SubstituteActiveChanged { get; set; }
-    [Parameter]
-    public required bool IsOffensivePokemonTera { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsOffensivePokemonTera { get; set; }
     [Parameter]
     public EventCallback<bool> IsOffensivePokemonTeraChanged { get; set; }
-    [Parameter]
-    public required bool IsDefensivePokemonTera { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsDefensivePokemonTera { get; set; }
     [Parameter]
     public EventCallback<bool> IsDefensivePokemonTeraChanged { get; set; }
-    [Parameter]
-    public required string OffensiveStatusCondition { get; set; }
+    [Parameter, EditorRequired]
+    public string OffensiveStatusCondition { get; set; }
     [Parameter]
     public EventCallback<string> OffensiveStatusConditionChanged { get; set; }
-    [Parameter]
-    public required string DefensiveStatusCondition { get; set; }
+    [Parameter, EditorRequired]
+    public string DefensiveStatusCondition { get; set; }
     [Parameter]
     public EventCallback<string> DefensiveStatusConditionChanged { get; set; }
-    [Parameter]
-    public required string Weather { get; set; }
+    [Parameter, EditorRequired]
+    public string Weather { get; set; }
     [Parameter]
     public EventCallback<string> WeatherChanged { get; set; }
-    [Parameter]
-    public required string Terrain { get; set; }
+    [Parameter, EditorRequired]
+    public string Terrain { get; set; }
     [Parameter]
     public EventCallback<string> TerrainChanged { get; set; }
 

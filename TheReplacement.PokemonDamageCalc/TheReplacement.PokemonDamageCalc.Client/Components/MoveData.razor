@@ -26,8 +26,9 @@
 
 @code {
     private bool _displayDescription = true;
-    [Parameter]
-    public required DTOs.MoveData Move { get; set; }
+
+    [Parameter, EditorRequired]
+    public DTOs.MoveData Move { get; set; }
 
     private object? GetDamage()
     {

@@ -52,38 +52,38 @@
 </div>
 
 @code {
-    [Parameter]
-    public required bool IsPokemonTera { get; set; }
-    [Parameter]
-    public required List<RawPokemon> PokemonList { get; set; }
-    [Parameter]
-    public required List<AbilityData> AbilityList { get; set; }
-    [Parameter]
-    public required List<string> Natures { get; set; }
-    [Parameter]
-    public required ICollection<string> ItemCollection { get; set; }
-    [Parameter]
-    public required int FormIndex { get; set; }
+    [Parameter, EditorRequired]
+    public bool IsPokemonTera { get; set; }
+    [Parameter, EditorRequired]
+    public List<RawPokemon> PokemonList { get; set; }
+    [Parameter, EditorRequired]
+    public List<AbilityData> AbilityList { get; set; }
+    [Parameter, EditorRequired]
+    public List<string> Natures { get; set; }
+    [Parameter, EditorRequired]
+    public ICollection<string> ItemCollection { get; set; }
+    [Parameter, EditorRequired]
+    public int FormIndex { get; set; }
     [Parameter]
     public EventCallback<int> FormIndexChanged { get; set; }
-    [Parameter]
-    public required int Level { get; set; }
+    [Parameter, EditorRequired]
+    public int Level { get; set; }
     [Parameter]
     public EventCallback<int> LevelChanged { get; set; }
-    [Parameter]
-    public required int NatureIndex { get; set; }
+    [Parameter, EditorRequired]
+    public int NatureIndex { get; set; }
     [Parameter]
     public EventCallback<int> NatureIndexChanged { get; set; }
-    [Parameter]
-    public required int Ability { get; set; }
+    [Parameter, EditorRequired]
+    public int Ability { get; set; }
     [Parameter]
     public EventCallback<int> AbilityChanged { get; set; }
-    [Parameter]
-    public required string Item { get; set; }
+    [Parameter, EditorRequired]
+    public string Item { get; set; }
     [Parameter]
     public EventCallback<string> ItemChanged { get; set; }
-    [Parameter]
-    public required string Tera { get; set; }
+    [Parameter, EditorRequired]
+    public string Tera { get; set; }
     [Parameter]
     public EventCallback<string> TeraChanged { get; set; }
 

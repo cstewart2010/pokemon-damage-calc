@@ -19,17 +19,16 @@
 </div>
 
 @code {
-
-    [Parameter]
-    public required string OffensiveName { get; set; }
-    [Parameter]
-    public required string DefensiveName { get; set; }
+    [Parameter, EditorRequired]
+    public string OffensiveName { get; set; }
     [Parameter]
     public EventCallback<string> OffensiveNameChanged { get; set; }
+    [Parameter, EditorRequired]
+    public string DefensiveName { get; set; }
     [Parameter]
     public EventCallback<string> DefensiveNameChanged { get; set; }
-    [Parameter]
-    public required ICollection<string> PokedexCollection { get; set; }
+    [Parameter, EditorRequired]
+    public ICollection<string> PokedexCollection { get; set; }
 
     private async Task OnOffensiveNameChanged(ChangeEventArgs e)
     {

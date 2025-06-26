@@ -24,22 +24,22 @@
 @code {
     private IEnumerable<DamageRoll> _rolls = [];
 
-    [Parameter]
-    public required StattedPokemon OffensivePokemon { get; set; }
-    [Parameter]
-    public required StattedPokemon DefensivePokemon { get; set; }
-    [Parameter]
-    public required Conditionals Conditionals { get; set; }
-    [Parameter]
-    public required StringPair StatusConditions { get; set; }
-    [Parameter]
-    public required string Weather { get; set; }
-    [Parameter]
-    public required string Terrain { get; set; }
-    [Parameter]
-    public required ICollection<string> SetMovesErrors { get; set; }
-    [Parameter]
-    public required DTOs.MoveData Move { get; set; }
+    [Parameter, EditorRequired]
+    public StattedPokemon OffensivePokemon { get; set; }
+    [Parameter, EditorRequired]
+    public StattedPokemon DefensivePokemon { get; set; }
+    [Parameter, EditorRequired]
+    public Conditionals Conditionals { get; set; }
+    [Parameter, EditorRequired]
+    public StringPair StatusConditions { get; set; }
+    [Parameter, EditorRequired]
+    public string Weather { get; set; }
+    [Parameter, EditorRequired]
+    public string Terrain { get; set; }
+    [Parameter, EditorRequired]
+    public ICollection<string> SetMovesErrors { get; set; }
+    [Parameter, EditorRequired]
+    public DTOs.MoveData Move { get; set; }
 
     private string SetDamageRolls()
     {

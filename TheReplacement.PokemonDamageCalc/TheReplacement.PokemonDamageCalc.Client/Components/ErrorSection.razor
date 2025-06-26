@@ -25,10 +25,10 @@
 }
 
 @code {
-    [Parameter]
-    public required ICollection<string> SetListsErrors { get; set; }
-    [Parameter]
-    public required ICollection<string> SetPokemonErrors { get; set; }
-    [Parameter]
-    public required ICollection<string> SetMovesErrors { get; set; }
+    [Parameter, EditorRequired]
+    public ICollection<string> SetListsErrors { get; set; }
+    [Parameter, EditorRequired]
+    public ICollection<string> SetPokemonErrors { get; set; }
+    [Parameter, EditorRequired]
+    public ICollection<string> SetMovesErrors { get; set; }
 }

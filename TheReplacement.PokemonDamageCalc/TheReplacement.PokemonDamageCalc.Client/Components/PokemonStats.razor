@@ -47,78 +47,78 @@
 <br />
 
 @code {
-    [Parameter]
-    public required DataModel.StattedPokemon Pokemon { get; set; }
-    [Parameter]
-    public required double CurrentHP { get; set; }
+    [Parameter, EditorRequired]
+    public DataModel.StattedPokemon Pokemon { get; set; }
+    [Parameter, EditorRequired]
+    public double CurrentHP { get; set; }
     [Parameter]
     public EventCallback<double> CurrentHPChanged { get; set; }
-    [Parameter]
-    public required int HPIVs { get; set; }
+    [Parameter, EditorRequired]
+    public int HPIVs { get; set; }
     [Parameter]
     public EventCallback<int> HPIVsChanged { get; set; }
-    [Parameter]
-    public required int AttackIVs { get; set; }
+    [Parameter, EditorRequired]
+    public int AttackIVs { get; set; }
     [Parameter]
     public EventCallback<int> AttackIVsChanged { get; set; }
-    [Parameter]
-    public required int DefenseIVs { get; set; }
+    [Parameter, EditorRequired]
+    public int DefenseIVs { get; set; }
     [Parameter]
     public EventCallback<int> DefenseIVsChanged { get; set; }
-    [Parameter]
-    public required int SpecialAttackIVs { get; set; }
+    [Parameter, EditorRequired]
+    public int SpecialAttackIVs { get; set; }
     [Parameter]
     public EventCallback<int> SpecialAttackIVsChanged { get; set; }
-    [Parameter]
-    public required int SpecialDefenseIVs { get; set; }
+    [Parameter, EditorRequired]
+    public int SpecialDefenseIVs { get; set; }
     [Parameter]
     public EventCallback<int> SpecialDefenseIVsChanged { get; set; }
-    [Parameter]
-    public required int SpeedIVs { get; set; }
+    [Parameter, EditorRequired]
+    public int SpeedIVs { get; set; }
     [Parameter]
     public EventCallback<int> SpeedIVsChanged { get; set; }
-    [Parameter]
-    public required int HPEVs { get; set; }
+    [Parameter, EditorRequired]
+    public int HPEVs { get; set; }
     [Parameter]
     public EventCallback<int> HPEVsChanged { get; set; }
-    [Parameter]
-    public required int AttackEVs { get; set; }
+    [Parameter, EditorRequired]
+    public int AttackEVs { get; set; }
     [Parameter]
     public EventCallback<int> AttackEVsChanged { get; set; }
-    [Parameter]
-    public required int DefenseEVs { get; set; }
+    [Parameter, EditorRequired]
+    public int DefenseEVs { get; set; }
     [Parameter]
     public EventCallback<int> DefenseEVsChanged { get; set; }
-    [Parameter]
-    public required int SpecialAttackEVs { get; set; }
+    [Parameter, EditorRequired]
+    public int SpecialAttackEVs { get; set; }
     [Parameter]
     public EventCallback<int> SpecialAttackEVsChanged { get; set; }
-    [Parameter]
-    public required int SpecialDefenseEVs { get; set; }
+    [Parameter, EditorRequired]
+    public int SpecialDefenseEVs { get; set; }
     [Parameter]
     public EventCallback<int> SpecialDefenseEVsChanged { get; set; }
-    [Parameter]
-    public required int SpeedEVs { get; set; }
+    [Parameter, EditorRequired]
+    public int SpeedEVs { get; set; }
     [Parameter]
     public EventCallback<int> SpeedEVsChanged { get; set; }
-    [Parameter]
-    public required int AttackStages { get; set; }
+    [Parameter, EditorRequired]
+    public int AttackStages { get; set; }
     [Parameter]
     public EventCallback<int> AttackStagesChanged { get; set; }
-    [Parameter]
-    public required int DefenseStages { get; set; }
+    [Parameter, EditorRequired]
+    public int DefenseStages { get; set; }
     [Parameter]
     public EventCallback<int> DefenseStagesChanged { get; set; }
-    [Parameter]
-    public required int SpecialAttackStages { get; set; }
+    [Parameter, EditorRequired]
+    public int SpecialAttackStages { get; set; }
     [Parameter]
     public EventCallback<int> SpecialAttackStagesChanged { get; set; }
-    [Parameter]
-    public required int SpecialDefenseStages { get; set; }
+    [Parameter, EditorRequired]
+    public int SpecialDefenseStages { get; set; }
     [Parameter]
     public EventCallback<int> SpecialDefenseStagesChanged { get; set; }
-    [Parameter]
-    public required int SpeedStages { get; set; }
+    [Parameter, EditorRequired]
+    public int SpeedStages { get; set; }
     [Parameter]
     public EventCallback<int> SpeedStagesChanged { get; set; }
 
