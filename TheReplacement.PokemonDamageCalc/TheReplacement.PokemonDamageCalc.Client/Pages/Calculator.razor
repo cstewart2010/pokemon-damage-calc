@@ -161,7 +161,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Natures = await _pokeService.GetNatures();
+        Natures = await _pokeService.GetNaturesAsync();
         ItemCollection = await _pokeService.GetItemsAsync();
         PokedexCollection = await _pokeService.GetPokedexAsync();
         MovedexCollection = await _pokeService.GetMovesAsync();

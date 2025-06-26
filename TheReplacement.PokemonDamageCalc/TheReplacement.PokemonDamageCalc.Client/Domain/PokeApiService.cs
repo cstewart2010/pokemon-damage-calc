@@ -38,7 +38,7 @@
                     SpecialDefense = GetBaseStat(x, Stats.SpecialDefense),
                     Speed = GetBaseStat(x, Stats.Speed),
                 },
-                Types = x.Types.Select(y => y.Type.Name).ToList(),
+                Types = [.. x.Types.Select(y => y.Type.Name)],
                 Weight = x.Weight,
                 Abilities = [.. x.Abilities.Select(y => new AbilityData
                 {
@@ -89,7 +89,7 @@
         public async Task<List<string>> GetMovesAsync()
         {
             var list = await _client.GetNamedResourcePageAsync<Move>(1000, 0);
-            return list.Results.Select(x => x.Name.ToCapitalized()).ToList();
+            return [.. list.Results.Select(x => x.Name.ToCapitalized())];
         }
 
         public async Task<List<string>> GetItemsAsync()
@@ -98,7 +98,7 @@
             return [.. list.Results.Select(x => x.Name.ToCapitalized())];
         }
 
-        public async Task<List<string>> GetNatures()
+        public async Task<List<string>> GetNaturesAsync()
         {
             var natures = await _client.GetNamedResourcePageAsync<Nature>(30, 0);
             return await Task.Run<List<string>>(() =>

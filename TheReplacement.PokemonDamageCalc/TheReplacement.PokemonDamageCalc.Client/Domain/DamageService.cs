@@ -110,7 +110,6 @@
         {
             double attack = 0, defense = 0;
             double attackMultiplier = 1;
-            // todo: choice band/specs
             if (Maps.IsStatBoostByAbilityMap.TryGetValue(offensivePokemon.Ability, out var func1) && func1(offensivePokemon, move))
             {
                 attackMultiplier *= 1.5;
@@ -190,7 +189,6 @@
             StattedPokemon defensivePokemon,
             MoveData move)
         {
-            // todo: move power boosting items
             var power = move.BasePower;
             if (Maps.ConditionalMovePowerMap.TryGetValue(move.Name, out var powerFunction))
             {

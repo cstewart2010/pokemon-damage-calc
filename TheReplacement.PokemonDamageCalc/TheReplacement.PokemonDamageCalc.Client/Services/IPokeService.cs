@@ -10,6 +10,6 @@
         public Task<List<string>> GetPokedexAsync();
         public Task<List<string>> GetMovesAsync();
         public Task<List<string>> GetItemsAsync();
-        public Task<List<string>> GetNatures();
+        public Task<List<string>> GetNaturesAsync();
     }
 }
