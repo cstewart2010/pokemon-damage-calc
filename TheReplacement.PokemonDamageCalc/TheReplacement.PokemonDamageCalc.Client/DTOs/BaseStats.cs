@@ -1,4 +1,4 @@
-﻿namespace TheReplacement.PokemonDamageCalc.Client.DataModel
+﻿namespace TheReplacement.PokemonDamageCalc.Client.DTOs
 {
     public class BaseStats
     {

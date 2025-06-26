@@ -2,7 +2,6 @@
 {
     using PokeApiNet;
     using TheReplacement.PokemonDamageCalc.Client.Constants;
-    using TheReplacement.PokemonDamageCalc.Client.DataModel;
     using TheReplacement.PokemonDamageCalc.Client.DTOs;
     using TheReplacement.PokemonDamageCalc.Client.Extensions;
     using TheReplacement.PokemonDamageCalc.Client.Services;
@@ -80,19 +79,19 @@
             };
         }
 
-        public async Task<List<string>> GetPokedexAsync()
+        public async Task<ICollection<string>> GetPokedexAsync()
         {
             var list = await _client.GetNamedResourcePageAsync<PokemonSpecies>(2000, 0);
             return [.. list.Results.Select(x => x.Name.ToCapitalized())];
         }
 
-        public async Task<List<string>> GetMovesAsync()
+        public async Task<ICollection<string>> GetMovesAsync()
         {
             var list = await _client.GetNamedResourcePageAsync<Move>(1000, 0);
             return [.. list.Results.Select(x => x.Name.ToCapitalized())];
         }
 
-        public async Task<List<string>> GetItemsAsync()
+        public async Task<ICollection<string>> GetItemsAsync()
         {
             var list = await _client.GetNamedResourcePageAsync<Item>(3000, 0);
             return [.. list.Results.Select(x => x.Name.ToCapitalized())];

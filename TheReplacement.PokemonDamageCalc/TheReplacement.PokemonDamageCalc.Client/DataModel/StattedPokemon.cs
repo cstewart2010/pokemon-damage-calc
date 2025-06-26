@@ -3,20 +3,11 @@
     using TheReplacement.PokemonDamageCalc.Client.Constants;
     using TheReplacement.PokemonDamageCalc.Client.DTOs;
 
-    public class StattedPokemon
+    public class StattedPokemon(RawPokemon pokemon, NatureData nature)
     {
-        private RawPokemon _pokemon;
-        private NatureData _nature;
+        private RawPokemon _pokemon = pokemon;
+        private NatureData _nature = nature;
         private double _currentHp;
-
-        public StattedPokemon(RawPokemon pokemon, NatureData nature)
-        {
-            _pokemon = pokemon;
-            _nature = nature;
-            Stages = new Stages();
-            IVs = new IVs();
-            EVs = new EVs();
-        }
 
         public int Level { get; set; }
         public int Friendship { get; set; }
@@ -42,9 +33,9 @@
             }
         }
         public string? TeraType { get; set; }
-        public Stages Stages { get; }
-        public IVs IVs { get; }
-        public EVs EVs { get; }
+        public Stages Stages { get; } = new Stages();
+        public IVs IVs { get; } = new IVs();
+        public EVs EVs { get; } = new EVs();
         public string Species => _pokemon.SpeciesName;
         public string Nature => _nature.Name;
         public double HP => GetHp();

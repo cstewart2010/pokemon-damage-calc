@@ -7,9 +7,9 @@
         public Task<List<RawPokemon>> GetPokemonAsync(string name);
         public Task<MoveData?> GetMoveAsync(string name);
         public Task<NatureData> GetNatureAsync(int index);
-        public Task<List<string>> GetPokedexAsync();
-        public Task<List<string>> GetMovesAsync();
-        public Task<List<string>> GetItemsAsync();
+        public Task<ICollection<string>> GetPokedexAsync();
+        public Task<ICollection<string>> GetMovesAsync();
+        public Task<ICollection<string>> GetItemsAsync();
         public Task<List<string>> GetNaturesAsync();
     }
 }
