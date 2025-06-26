@@ -1,0 +1,51 @@
+﻿@using TheReplacement.PokemonDamageCalc.Client.Extensions;
+<div class= "input-group" >
+    <span class="input-group-text">Offensive Pokemon Species</span>
+    <input class="form-control" list="offensiveDex" placeholder="Type to search..." @bind-value="OffensiveName" @oninput="OnOffensiveNameChanged" />
+    <datalist id="offensiveDex">
+        @for (var index = 0; index < PokedexCollection.Count; index++)
+        {
+            <option value="@PokedexCollection[index]">@PokedexCollection[index]</option>
+        }
+    </datalist>
+    <span class="input-group-text">Defensive Pokemon Species</span>
+    <input class="form-control" list="defensiveDex" placeholder="Type to search..." @bind-value="DefensiveName" @oninput="OnDefensiveNameChanged" />
+    <datalist id="defensiveDex">
+        @for (var index = 0; index < PokedexCollection.Count; index++)
+        {
+            <option value="@PokedexCollection[index]">@PokedexCollection[index]</option>
+        }
+    </datalist>
+</div>
+
+@code {
+
+    [Parameter]
+    public required string OffensiveName { get; set; }
+    [Parameter]
+    public required string DefensiveName { get; set; }
+    [Parameter]
+    public EventCallback<string> OffensiveNameChanged { get; set; }
+    [Parameter]
+    public EventCallback<string> DefensiveNameChanged { get; set; }
+    [Parameter]
+    public required List<string> PokedexCollection { get; set; }
+
+    private async Task OnOffensiveNameChanged(ChangeEventArgs e)
+    {
+        var name = e?.Value?.ToString()?.ToCapitalized();
+        if (name != null && PokedexCollection.Contains(name))
+        {
+            await OffensiveNameChanged.InvokeAsync(name);
+        }
+    }
+
+    private async Task OnDefensiveNameChanged(ChangeEventArgs e)
+    {
+        var name = e?.Value?.ToString()?.ToCapitalized();
+        if (name != null && PokedexCollection.Contains(name))
+        {
+            await DefensiveNameChanged.InvokeAsync(name);
+        }
+    }
+}

@@ -16,6 +16,7 @@
             HalfAtFullHealth = [Abilities.Multiscale, Abilities.ShadowShield],
             ContactMoves = [],
             SoundMoves = [],
+            BulletMoves = [],
             MultiTargetMoves = [MoveTargets.AllOpponents, MoveTargets.AllOtherPokemon],
             DefendedSuperEffective = [Abilities.Filter, Abilities.PrismArmor, Abilities.SolidRock],
             IgnoreProtectMoves = [Moves.DoomDesire, Moves.Feint, Moves.FutureSight, Moves.HyperDrill, Moves.HyperspaceFury, Moves.HyperspaceHole, Moves.HyperspaceHole, Moves.MightyCleave, Moves.PhantomForce, Moves.ShadowForce],

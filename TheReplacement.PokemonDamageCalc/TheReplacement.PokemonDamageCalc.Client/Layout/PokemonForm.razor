@@ -1,0 +1,106 @@
+﻿@using TheReplacement.PokemonDamageCalc.Client.Constants;
+@using TheReplacement.PokemonDamageCalc.Client.DTOs;
+@using TheReplacement.PokemonDamageCalc.Client.Extensions;
+<div class="input-group">
+    <span class="input-group-text">Offensive Pokemon</span>
+    <InputSelect class="form-select" @bind-Value="FormIndex" @oninput="e => OnIntChanged(e, FormIndexChanged)">
+        @for (var index = 0; index < PokemonList.Count; index++)
+        {
+            <option value="@index">@PokemonList[index].SpeciesName.ToCapitalized()</option>
+        }
+    </InputSelect>
+    <span class="input-group-text">Level</span>
+    <input class="form-control" type="number" min="1" max="100" @bind-value="Level" @oninput="e => OnIntChanged(e, LevelChanged)" />
+    <span class="input-group-text">Nature</span>
+    <InputSelect class="form-select" @bind-Value="NatureIndex" @oninput="e => OnIntChanged(e, NatureIndexChanged)">
+        @for (var index = 0; index < Natures.Count; index++)
+        {
+            <option value="@index">@Natures[index]</option>
+        }
+    </InputSelect>
+    <span class="input-group-text">Ability</span>
+    <InputSelect class="form-select" @bind-Value="Ability" @oninput="e => OnIntChanged(e, AbilityChanged)">
+        @for (var index = 0; index < AbilityList.Count; index++)
+        {
+            @if (AbilityList[index].IsHidden)
+            {
+                <option value="@index">@AbilityList[index].Name.ToCapitalized() (Hidden)</option>
+            }
+            else
+            {
+                <option value="@index">@AbilityList[index].Name.ToCapitalized()</option>
+            }
+        }
+    </InputSelect>
+    <span class="input-group-text">Held Item</span>
+    <InputSelect class="form-select" @bind-Value="Item" @oninput="e => OnStringChanged(e, ItemChanged)">
+        @foreach (var item in ItemCollection)
+        {
+            <option value="@item">@item</option>
+        }
+    </InputSelect>
+    @if (IsPokemonTera)
+    {
+        <span class="input-group-text">Tera Type</span>
+        <InputSelect class="form-select" @bind-Value="Tera" @oninput="e => OnStringChanged(e, TeraChanged)">
+            @foreach (var type in Maps.TypeEffectivenessChart.Keys)
+            {
+                <option value="@type">@type.ToCapitalized()</option>
+            }
+        </InputSelect>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public required bool IsPokemonTera { get; set; }
+    [Parameter]
+    public required List<RawPokemon> PokemonList { get; set; }
+    [Parameter]
+    public required List<AbilityData> AbilityList { get; set; }
+    [Parameter]
+    public required List<string> Natures { get; set; }
+    [Parameter]
+    public required List<string> ItemCollection { get; set; }
+    [Parameter]
+    public required int FormIndex { get; set; }
+    [Parameter]
+    public EventCallback<int> FormIndexChanged { get; set; }
+    [Parameter]
+    public required int Level { get; set; }
+    [Parameter]
+    public EventCallback<int> LevelChanged { get; set; }
+    [Parameter]
+    public required int NatureIndex { get; set; }
+    [Parameter]
+    public EventCallback<int> NatureIndexChanged { get; set; }
+    [Parameter]
+    public required int Ability { get; set; }
+    [Parameter]
+    public EventCallback<int> AbilityChanged { get; set; }
+    [Parameter]
+    public required string Item { get; set; }
+    [Parameter]
+    public EventCallback<string> ItemChanged { get; set; }
+    [Parameter]
+    public required string Tera { get; set; }
+    [Parameter]
+    public EventCallback<string> TeraChanged { get; set; }
+
+    private async Task OnIntChanged(ChangeEventArgs e, EventCallback<int> callback)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var index))
+        {
+            await callback.InvokeAsync(index);
+        }
+    }
+
+    private async Task OnStringChanged(ChangeEventArgs e, EventCallback<string> callback)
+    {
+        var item = e.Value?.ToString();
+        if (item != null)
+        {
+            await callback.InvokeAsync(item);
+        }
+    }
+}

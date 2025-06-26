@@ -17,7 +17,7 @@
             if (str == null) throw new ArgumentNullException(nameof(str));
             if (str.Length <= 1) return str.ToUpper();
             var firstChar = char.ToUpper(str[0]);
-            return firstChar + str.Substring(1);
+            return firstChar + str.Substring(1).ToLowerInvariant();
         }
     }
 }

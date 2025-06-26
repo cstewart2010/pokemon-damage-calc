@@ -1,13 +1,34 @@
-﻿<div class="h3">Errors</div>
-@foreach (var error in Errors)
+﻿@if (SetListsErrors.Any() || SetPokemonErrors.Any() || SetMovesErrors.Any())
 {
-    foreach (var line in error.Split("\n"))
+    <div class="h3">Errors</div>
+    @foreach (var error in SetListsErrors)
     {
-        <div>@line</div>
+        foreach (var line in error.Split("\n"))
+        {
+            <div>@line</div>
+        }
+    }
+    @foreach (var error in SetPokemonErrors)
+    {
+        foreach (var line in error.Split("\n"))
+        {
+            <div>@line</div>
+        }
+    }
+    @foreach (var error in SetMovesErrors)
+    {
+        foreach (var line in error.Split("\n"))
+        {
+            <div>@line</div>
+        }
     }
 }
 
 @code {
     [Parameter]
-    public required ICollection<string> Errors { get; set; }
+    public required ICollection<string> SetListsErrors { get; set; }
+    [Parameter]
+    public required ICollection<string> SetPokemonErrors { get; set; }
+    [Parameter]
+    public required ICollection<string> SetMovesErrors { get; set; }
 }

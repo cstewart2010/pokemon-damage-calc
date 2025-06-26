@@ -19,7 +19,5 @@
         public bool SubstituteActive { get; set; }
         public bool IsOffensivePokemonTera { get; set; }
         public bool IsDefensivePokemonTera { get; set; }
-        public bool DisplayDescription { get; set; } = true;
-        public bool DisplayConditions { get; set; } = true;
     }
 }

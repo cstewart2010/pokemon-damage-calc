@@ -62,7 +62,8 @@
                 DamageClass = move.DamageClass.Name,
                 Target = move.Target.Name,
                 Type = move.Type.Name,
-                FlavorText = move.FlavorTextEntries.FirstOrDefault(x => x.Language.Name == "en" && x.VersionGroup.Name == "scarlet-violet")?.FlavorText ?? "Not present in Scarlet/Violet"
+                FlavorText = move.FlavorTextEntries.FirstOrDefault(x => x.Language.Name == "en" && x.VersionGroup.Name == "scarlet-violet")?.FlavorText ?? "Not present in Scarlet/Violet",
+                Accuracy = move.Accuracy
             };
         }
 

@@ -1,18 +1,69 @@
-﻿<h3>Damage Rolls</h3>
-<div class="input-group">
-    <div class="input-group-text">Critical? </div>
-    <InputCheckbox @bind-Value="IsCritical"></InputCheckbox>
+﻿@using TheReplacement.PokemonDamageCalc.Client.DataModel;
+@using TheReplacement.PokemonDamageCalc.Client.Extensions;
+@using TheReplacement.PokemonDamageCalc.Client.Services;
+@inject IDamageService _damageService;
+<div class= "h3" > Damage Rolls </div>
+<div class="h4">
+    <strong>
+        @Move.Name.ToCapitalized():
+    </strong>
+    @SetDamageRolls()
 </div>
-<div class="row">
-    @for (var index = 85; index <= 100; index++)
+<div class="row border border-dark text-center mb-4">
+    @foreach (var damageRoll in _rolls)
     {
-        <div class="col">@Attack(index)</div>
+        <div class="col-6 col-lg-3 col-xl-2 col-xxl border-end border-dark">
+            <div class="d-flex d-flex-column align-items-center">
+                <div class="col border-end border-dark">@damageRoll.Roll% DR</div>
+                <div class="col">@damageRoll.Damage</div>
+            </div>
+        </div>
     }
 </div>
 
 @code {
+    private IEnumerable<DataModel.DamageRoll> _rolls = [];
+
     [Parameter]
-    public required bool IsCritical { get; set; }
+    public required StattedPokemon OffensivePokemon { get; set; }
     [Parameter]
-    public required Func<int, double> Attack { get; set; }
+    public required StattedPokemon DefensivePokemon { get; set; }
+    [Parameter]
+    public required Conditionals Conditionals { get; set; }
+    [Parameter]
+    public required StringPair StatusConditions { get; set; }
+    [Parameter]
+    public required string Weather { get; set; }
+    [Parameter]
+    public required string Terrain { get; set; }
+    [Parameter]
+    public required ICollection<string> SetMovesErrors { get; set; }
+    [Parameter]
+    public required DTOs.MoveData Move { get; set; }
+
+    private string SetDamageRolls()
+    {
+        SetMovesErrors.Clear();
+        try
+        {
+            _rolls = _damageService.GetDamageRolls(
+                OffensivePokemon,
+                DefensivePokemon,
+                Move,
+                Conditionals,
+                StatusConditions,
+                Weather,
+                Terrain);
+
+            var lowRoll = (_rolls.FirstOrDefault()?.Damage ?? 0) / DefensivePokemon.CurrentHP * 100;
+            var highRoll = (_rolls.LastOrDefault()?.Damage ?? 0) / DefensivePokemon.CurrentHP * 100;
+            return $"{Math.Floor(lowRoll * 10) / 10} - {Math.Floor(highRoll * 10) / 10}%";
+        }
+        catch (Exception ex)
+        {
+            SetMovesErrors.Add(ex.ToString());
+            _rolls = [];
+            return string.Empty;
+        }
+    }
 }

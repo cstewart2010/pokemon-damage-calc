@@ -8,5 +8,6 @@
         public required string Type { get; init; }
         public required string Target { get; init; }
         public required string FlavorText { get; init; }
+        public required int? Accuracy { get; init; }
     }
 }

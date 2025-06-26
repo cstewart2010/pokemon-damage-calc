@@ -30,7 +30,7 @@
             {
                 return [];
             }
-            var trueDamage = GetTrueDamage(offensivePokemon, defensivePokemon, move);
+            var trueDamage = GetTrueDamage(offensivePokemon, move);
             if (trueDamage != null)
             {
                 return Enumerable.Range(85, 16).Select(roll => new DamageRoll
@@ -48,7 +48,7 @@
             var critMultiplier = GetCriticalMuliplier(offensivePokemon, defensivePokemon, move, statusConditions.Defensive, conditionals);
             var stab = GetStab(offensivePokemon, move);
             var statusMultiplier = GetStatusMultiplier(offensivePokemon, move, statusConditions.Offensive);
-            var terrainMultiplier = GetTerrainMultiplier(terrain, move, offensivePokemon, defensivePokemon);
+            var terrainMultiplier = GetTerrainMultiplier(terrain, move, offensivePokemon);
             var otherMultiplier = GetOtherMultiplier(offensivePokemon, defensivePokemon, move, conditionals, typeEffectivenessMultiplier);
             var rawDamage = Math.Floor((2 * offensivePokemon.Level / 5.0 + 2) * basePower * (attack / defense) / 50 + 2);
             rawDamage = Math.Floor(rawDamage * targetsMultiplier);
@@ -78,19 +78,19 @@
             double typeEffectivenessMultiplier)
         {
             return attack == 0 ||
-                conditionals.UsedFly ||
                 typeEffectivenessMultiplier == 0 ||
+                (Collections.SoundMoves.Contains(move.Name) && defensivePokemon.Ability == Abilities.Soundproof && !Collections.IgnoreAbilities.Contains(offensivePokemon.Ability)) ||
+                (Collections.BulletMoves.Contains(move.Name) && defensivePokemon.Ability == Abilities.Bulletproof && !Collections.IgnoreAbilities.Contains(offensivePokemon.Ability)) ||
                 (conditionals.ProtectActive && !(Collections.IgnoreProtectMoves.Contains(move.Name) || offensivePokemon.Ability == Abilities.UnseenFist)) ||
                 (conditionals.SubstituteActive && !(Collections.SoundMoves.Contains(move.Name) || Collections.IgnoreSubstitute.Contains(move.Name) || offensivePokemon.Ability == Abilities.Infiltrator)) ||
                 (conditionals.UsedDig && !Collections.DigMultipliers.Contains(move.Name)) ||
-                (conditionals.UsedFly && !Collections.DiveMultipliers.Contains(move.Name)) ||
-                (conditionals.UsedDive && !Collections.IgnoreFly.Contains(move.Name));
+                (conditionals.UsedDive && !Collections.DiveMultipliers.Contains(move.Name)) ||
+                (conditionals.UsedFly && !Collections.IgnoreFly.Contains(move.Name));
 
         }
 
         private static int? GetTrueDamage(
             StattedPokemon offensivePokemon,
-            StattedPokemon defensivePokemon,
             MoveData move)
         {
             if (Maps.TrueDamageMap.TryGetValue(move.Name, out var func))
@@ -488,7 +488,7 @@
             return statusMultiplier;
         }
 
-        private static double GetTerrainMultiplier(string terrain, MoveData move, StattedPokemon offendingPokemon, StattedPokemon defendingPokemon)
+        private static double GetTerrainMultiplier(string terrain, MoveData move, StattedPokemon offendingPokemon)
         {
             double multiplier = 1;
             var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);
