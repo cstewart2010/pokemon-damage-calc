@@ -1,0 +1,436 @@
+﻿@page "/calc"
+@inject IPokeService _pokeService;
+@using TheReplacement.PokemonDamageCalc.Constants;
+@using TheReplacement.PokemonDamageCalc.DataModel;
+@using TheReplacement.PokemonDamageCalc.DTOs;
+@using TheReplacement.PokemonDamageCalc.Extensions;
+@using TheReplacement.PokemonDamageCalc.Services;
+
+<PageTitle>Calculator</PageTitle>
+@if (_isReady)
+{
+    <TheReplacement.PokemonDamageCalc.Layout.SpeciesInput @bind-OffensiveName="Names.Offensive" @bind-OffensiveName:after="ResetOffensivePokemonAsync"
+                                                                 @bind-DefensiveName="Names.Defensive" @bind-DefensiveName:after="ResetDefensivePokemonAsync"
+                                                                 PokedexCollection="PokedexCollection" />
+
+    @if (!(_offensivePokemon == null || _defensivePokemon == null))
+    {
+        <TheReplacement.PokemonDamageCalc.Layout.PokemonForm @bind-FormIndex="FormIndicies.Offensive" @bind-FormIndex:after="UpdateOffensiveForm"
+                                                                    @bind-Level="Levels.Offensive" @bind-Level:after="UpdateOffensiveLevel"
+                                                                    @bind-NatureIndex="NatureIndicies.Offensive" @bind-NatureIndex:after="UpdateOffensiveNatureAsync"
+                                                                    @bind-Ability="Abilities.Offensive" @bind-Ability:after="UpdateOffensiveAbilityAsync"
+                                                                    @bind-Item="Items.Offensive" @bind-Item:after="UpdateOffensiveItemAsync"
+                                                                    @bind-Tera="Tera.Offensive" @bind-Tera:after="UpdateOffensiveTeraAsync"
+                                                                    PokemonList="_offensivePokemonList"
+                                                                    AbilityList="_offensiveAbilityList"
+                                                                    Natures="Natures"
+                                                                    ItemCollection="ItemCollection"
+                                                                    IsPokemonTera="_conditionals.IsOffensivePokemonTera" />
+        <TheReplacement.PokemonDamageCalc.Layout.PokemonForm @bind-FormIndex="FormIndicies.Defensive" @bind-FormIndex:after="UpdateDefensiveForm"
+                                                                    @bind-Level="Levels.Defensive" @bind-Level:after="UpdateDefensiveLevel"
+                                                                    @bind-NatureIndex="NatureIndicies.Defensive" @bind-NatureIndex:after="UpdateDefensiveNatureAsync"
+                                                                    @bind-Ability="Abilities.Defensive" @bind-Ability:after="UpdateDefensiveAbilityAsync"
+                                                                    @bind-Item="Items.Defensive" @bind-Item:after="UpdateDefensiveItemAsync"
+                                                                    @bind-Tera="Tera.Defensive" @bind-Tera:after="UpdateDefensiveTeraAsync"
+                                                                    PokemonList="_defensivePokemonList"
+                                                                    AbilityList="_defensiveAbilityList"
+                                                                    Natures="Natures"
+                                                                    ItemCollection="ItemCollection"
+                                                                    IsPokemonTera="_conditionals.IsDefensivePokemonTera" />
+
+        <TheReplacement.PokemonDamageCalc.Layout.PokemonStats Pokemon="_offensivePokemon"
+                                                                     @bind-CurrentHP="_offensivePokemon.CurrentHP"
+                                                                     @bind-HPIVs="_offensivePokemon.IVs.HP"
+                                                                     @bind-AttackIVs="_offensivePokemon.IVs.Attack"
+                                                                     @bind-DefenseIVs="_offensivePokemon.IVs.Defense"
+                                                                     @bind-SpecialAttackIVs="_offensivePokemon.IVs.SpecialAttack"
+                                                                     @bind-SpecialDefenseIVs="_offensivePokemon.IVs.SpecialDefense"
+                                                                     @bind-SpeedIVs="_offensivePokemon.IVs.Speed"
+                                                                     @bind-HPEVs="_offensivePokemon.EVs.HP"
+                                                                     @bind-AttackEVs="_offensivePokemon.EVs.Attack"
+                                                                     @bind-DefenseEVs="_offensivePokemon.EVs.Defense"
+                                                                     @bind-SpecialAttackEVs="_offensivePokemon.EVs.SpecialAttack"
+                                                                     @bind-SpecialDefenseEVs="_offensivePokemon.EVs.SpecialDefense"
+                                                                     @bind-SpeedEVs="_offensivePokemon.EVs.Speed"
+                                                                     @bind-AttackStages="_offensivePokemon.Stages.Attack"
+                                                                     @bind-DefenseStages="_offensivePokemon.Stages.Defense"
+                                                                     @bind-SpecialAttackStages="_offensivePokemon.Stages.SpecialAttack"
+                                                                     @bind-SpecialDefenseStages="_offensivePokemon.Stages.SpecialDefense"
+                                                                     @bind-SpeedStages="_offensivePokemon.Stages.Speed" />
+        <TheReplacement.PokemonDamageCalc.Layout.PokemonStats Pokemon="_defensivePokemon"
+                                                                     @bind-CurrentHP="_defensivePokemon.CurrentHP"
+                                                                     @bind-HPIVs="_defensivePokemon.IVs.HP"
+                                                                     @bind-AttackIVs="_defensivePokemon.IVs.Attack"
+                                                                     @bind-DefenseIVs="_defensivePokemon.IVs.Defense"
+                                                                     @bind-SpecialAttackIVs="_defensivePokemon.IVs.SpecialAttack"
+                                                                     @bind-SpecialDefenseIVs="_defensivePokemon.IVs.SpecialDefense"
+                                                                     @bind-SpeedIVs="_defensivePokemon.IVs.Speed"
+                                                                     @bind-HPEVs="_defensivePokemon.EVs.HP"
+                                                                     @bind-AttackEVs="_defensivePokemon.EVs.Attack"
+                                                                     @bind-DefenseEVs="_defensivePokemon.EVs.Defense"
+                                                                     @bind-SpecialAttackEVs="_defensivePokemon.EVs.SpecialAttack"
+                                                                     @bind-SpecialDefenseEVs="_defensivePokemon.EVs.SpecialDefense"
+                                                                     @bind-SpeedEVs="_defensivePokemon.EVs.Speed"
+                                                                     @bind-AttackStages="_defensivePokemon.Stages.Attack"
+                                                                     @bind-DefenseStages="_defensivePokemon.Stages.Defense"
+                                                                     @bind-SpecialAttackStages="_defensivePokemon.Stages.SpecialAttack"
+                                                                     @bind-SpecialDefenseStages="_defensivePokemon.Stages.SpecialDefense"
+                                                                     @bind-SpeedStages="_defensivePokemon.Stages.Speed" />
+
+        <TheReplacement.PokemonDamageCalc.Layout.MoveInput @bind-MoveName="_moveName" @bind-MoveName:after="SetMoveAsync"
+                                                                  MovedexCollection="@MovedexCollection" />
+        @if (_move != null)
+        {
+            <TheReplacement.PokemonDamageCalc.Layout.MoveDataSection Move="_move" />
+            <TheReplacement.PokemonDamageCalc.Layout.ConditionalValues OffensivePokemon="@_offensivePokemon.Species"
+                                                                              DefensivePokemon="@_defensivePokemon.Species"
+                                                                              @bind-IsCritical="_conditionals.IsCriticalHit"
+                                                                              @bind-LastMoveMissed="_conditionals.LastMoveMissed"
+                                                                              @bind-AfterGlaiveRush="_conditionals.AfterGlaiveRush"
+                                                                              @bind-IsMinimized="_conditionals.IsMinimized"
+                                                                              @bind-IsLaserFocus="_conditionals.IsLaserFocus"
+                                                                              @bind-UsedDig="_conditionals.UsedDig" @bind-UsedDig:after="() => { _conditionals.UsedDive = false; _conditionals.UsedFly = false;}"
+                                                                              @bind-UsedDive="_conditionals.UsedDive" @bind-UsedDive:after="() => { _conditionals.UsedDig = false; _conditionals.UsedFly = false; }"
+                                                                              @bind-UsedFly="_conditionals.UsedFly" @bind-UsedFly:after="() => { _conditionals.UsedDive = false; _conditionals.UsedDig = false; }"
+                                                                              @bind-UsedReflect="_conditionals.UsedReflect"
+                                                                              @bind-UsedLightScreen="_conditionals.UsedLightScreen"
+                                                                              @bind-UsedAuroraVeil="_conditionals.UsedAuroraVeil"
+                                                                              @bind-IsTagBattle="_conditionals.IsTagBattle" @bind-IsTagBattle:after="ToggleFriendGuardVisibility"
+                                                                              @bind-IsFriendGuarded="_conditionals.IsFriendGuarded"
+                                                                              @bind-ProtectActive="_conditionals.ProtectActive"
+                                                                              @bind-SubstituteActive="_conditionals.SubstituteActive"
+                                                                              @bind-IsOffensivePokemonTera="_conditionals.IsOffensivePokemonTera" @bind-IsOffensivePokemonTera:after="OnTeraToggle"
+                                                                              @bind-IsDefensivePokemonTera="_conditionals.IsDefensivePokemonTera" @bind-IsDefensivePokemonTera:after="OnTeraToggle"
+                                                                              @bind-OffensiveStatusCondition="StatusConditions.Offensive"
+                                                                              @bind-DefensiveStatusCondition="StatusConditions.Defensive"
+                                                                              @bind-Weather="_weather"
+                                                                              @bind-Terrain="_terrain" />
+            <TheReplacement.PokemonDamageCalc.Layout.DamageRolls OffensivePokemon="@_offensivePokemon"
+                                                                        DefensivePokemon="@_defensivePokemon"
+                                                                        Conditionals="@_conditionals"
+                                                                        StatusConditions="@StatusConditions"
+                                                                        Weather="@_weather"
+                                                                        Terrain="@_terrain"
+                                                                        SetMovesErrors="@SetMovesErrors"
+                                                                        Move="@_move" />
+        }
+    }
+
+    <TheReplacement.PokemonDamageCalc.Layout.ErrorSection SetListsErrors="@SetListsErrors"
+                                                                 SetPokemonErrors="@SetPokemonErrors"
+                                                                 SetMovesErrors="@SetMovesErrors" />
+}
+
+else
+{
+    <TheReplacement.PokemonDamageCalc.Layout.Spinner />
+}
+@code {
+    private StringPair
+        Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
+        StatusConditions = new StringPair { Offensive = Statuses.Healthy, Defensive = Statuses.Healthy },
+        Items = new StringPair { Offensive = "Heavy Duty Boots", Defensive = "Heavy Duty Boots" },
+        Tera = new StringPair();
+    private IntPair
+        NatureIndicies = new IntPair { Offensive = 1, Defensive = 1 },
+        Levels = new IntPair { Offensive = 100, Defensive = 100 },
+        FormIndicies = new(),
+        Abilities = new();
+    private string
+        _moveName = "Blizzard",
+        _weather = Weather.Hail,
+        _terrain = Terrain.None;
+    private ICollection<string>
+        SetListsErrors = [],
+        SetPokemonErrors = [],
+        SetMovesErrors = [],
+        ItemCollection = [],
+        PokedexCollection = [],
+        MovedexCollection = [];
+    private List<RawPokemon>
+        _offensivePokemonList = [],
+        _defensivePokemonList = [];
+    private List<AbilityData>
+        _offensiveAbilityList = [],
+        _defensiveAbilityList = [];
+    private StattedPokemon?
+        _offensivePokemon,
+        _defensivePokemon;
+    private List<string> Natures = [];
+    private Conditionals _conditionals = new Conditionals();
+    private IEnumerable<DamageRoll> _rolls = [];
+    private MoveData? _move;
+    private bool _isReady;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Natures = await _pokeService.GetNaturesAsync();
+        ItemCollection = await _pokeService.GetItemsAsync();
+        PokedexCollection = await _pokeService.GetPokedexAsync();
+        MovedexCollection = await _pokeService.GetMovesAsync();
+        await SetMoveAsync();
+        await SetListsAsync();
+        _isReady = true;
+    }
+
+    private void ToggleFriendGuardVisibility()
+    {
+        if (!_conditionals.IsTagBattle)
+        {
+            _conditionals.IsFriendGuarded = false;
+        }
+    }
+
+    private void OnTagToggle()
+    {
+        if (!_conditionals.IsTagBattle)
+        {
+            _conditionals.IsFriendGuarded = false;
+        }
+    }
+
+    private void OnTeraToggle()
+    {
+        if (!(_conditionals.IsOffensivePokemonTera || _offensivePokemon == null))
+        {
+            _offensivePokemon.TeraType = null;
+        }
+        if (!(_conditionals.IsDefensivePokemonTera || _defensivePokemon == null))
+        {
+            _defensivePokemon.TeraType = null;
+        }
+    }
+
+    private async Task SetMoveAsync()
+    {
+        _move = null;
+        SetMovesErrors.Clear();
+        if (string.IsNullOrEmpty(_moveName))
+        {
+            return;
+        }
+        _move = await _pokeService.GetMoveAsync(_moveName);
+        if (_move == null)
+        {
+            return;
+        }
+        else
+        {
+            SetMovesErrors.Add($"Failed to get move: {_moveName}");
+        }
+    }
+
+    private async Task SetListsAsync()
+    {
+        SetListsErrors.Clear();
+        var offensiveResult = await TrySetOffensiveFormsAsync();
+        var defensiveResult = await TrySetDefensiveFormsAsync();
+        if (!SetListsErrors.Any() && offensiveResult && defensiveResult)
+        {
+            await SetPokemonAsync();
+        }
+    }
+
+    private async Task SetPokemonAsync()
+    {
+        try
+        {
+            SetPokemonErrors.Clear();
+            SetOffensiveAbilities();
+            SetDefensiveAbilities();
+            _offensivePokemon = await GetStattedPokemonAsync(
+                _offensivePokemonList,
+                NatureIndicies.Offensive,
+                FormIndicies.Offensive,
+                Levels.Offensive);
+            _defensivePokemon = await GetStattedPokemonAsync(
+                _defensivePokemonList,
+                NatureIndicies.Defensive,
+                FormIndicies.Defensive,
+                Levels.Defensive);
+        }
+        catch (Exception ex)
+        {
+            SetPokemonErrors.Add(ex.ToString());
+        }
+    }
+
+    private async Task<StattedPokemon> GetStattedPokemonAsync(List<RawPokemon> formList, int natureIndex, int formIndex, int level)
+    {
+        var nature = await _pokeService.GetNatureAsync(natureIndex);
+        var pokemon = new StattedPokemon(formList[formIndex], nature)
+        {
+            Level = level,
+        };
+        pokemon.EVs.HP = 248;
+        pokemon.EVs.Defense = 252;
+        pokemon.EVs.Speed = 8;
+        pokemon.IVs.HP = 31;
+        pokemon.IVs.Attack = 31;
+        pokemon.IVs.Defense = 31;
+        pokemon.IVs.SpecialAttack = 31;
+        pokemon.IVs.SpecialDefense = 31;
+        pokemon.IVs.Speed = 31;
+        pokemon.CurrentHP = pokemon.HP;
+
+        return pokemon;
+    }
+
+    private async Task ResetOffensivePokemonAsync()
+    {
+        SetListsErrors.Clear();
+        var result = await TrySetOffensiveFormsAsync();
+        if (!result)
+        {
+            return;
+        }
+        UpdateOffensiveForm();
+    }
+
+    private async Task ResetDefensivePokemonAsync()
+    {
+        SetListsErrors.Clear();
+        var result = await TrySetDefensiveFormsAsync();
+        if (!result)
+        {
+            return;
+        }
+        UpdateDefensiveForm();
+    }
+
+    private void UpdateOffensiveForm()
+    {
+        _offensivePokemon!.UpdateForm(_offensivePokemonList[FormIndicies.Offensive]);
+        _offensivePokemon.CurrentHP = _offensivePokemon.HP;
+        SetOffensiveAbilities();
+        UpdateOffensiveAbilityAsync();
+    }
+
+    private void UpdateDefensiveForm()
+    {
+        _defensivePokemon!.UpdateForm(_defensivePokemonList[FormIndicies.Defensive]);
+        _defensivePokemon.CurrentHP = _defensivePokemon.HP;
+        SetDefensiveAbilities();
+        UpdateDefensiveAbilityAsync();
+    }
+
+    private async Task UpdateOffensiveNatureAsync()
+    {
+        var offensiveNature = await _pokeService.GetNatureAsync(NatureIndicies.Offensive);
+        _offensivePokemon!.UpdateNature(offensiveNature);
+    }
+
+    private async Task UpdateDefensiveNatureAsync()
+    {
+        var defensiveNature = await _pokeService.GetNatureAsync(NatureIndicies.Defensive);
+        _defensivePokemon!.UpdateNature(defensiveNature);
+    }
+
+    private void UpdateOffensiveLevel()
+    {
+        _offensivePokemon!.Level = Levels.Offensive;
+        _offensivePokemon.CurrentHP = _offensivePokemon.HP;
+    }
+
+    private void UpdateDefensiveLevel()
+    {
+        _defensivePokemon!.Level = Levels.Defensive;
+        _defensivePokemon.CurrentHP = _defensivePokemon.HP;
+    }
+
+    private void UpdateOffensiveAbilityAsync()
+    {
+        _offensivePokemon!.Ability = _offensiveAbilityList[Abilities.Offensive].Name;
+    }
+
+    private void UpdateDefensiveAbilityAsync()
+    {
+        _defensivePokemon!.Ability = _defensiveAbilityList[Abilities.Defensive].Name;
+    }
+
+    private void UpdateOffensiveItemAsync()
+    {
+        _offensivePokemon!.HeldItem = Items.Offensive.ToLowerCaseKebab();
+    }
+
+    private void UpdateDefensiveItemAsync()
+    {
+        _defensivePokemon!.HeldItem = Items.Defensive.ToLowerCaseKebab();
+    }
+
+    private void UpdateOffensiveTeraAsync()
+    {
+        _offensivePokemon!.TeraType = Tera.Offensive;
+    }
+
+    private void UpdateDefensiveTeraAsync()
+    {
+        _defensivePokemon!.TeraType = Tera.Defensive;
+    }
+
+    public async Task<bool> TrySetOffensiveFormsAsync()
+    {
+        if (string.IsNullOrEmpty(Names.Offensive))
+        {
+            return false;
+        }
+        _offensivePokemonList = [];
+        FormIndicies.Offensive = 0;
+        if (PokedexCollection.Any(x => x.Equals(Names.Offensive, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            _offensivePokemonList = await _pokeService.GetPokemonAsync(Names.Offensive);
+            return true;
+        }
+        else
+        {
+            SetListsErrors.Add($"Failed to get offensive pokemon: {Names.Offensive}");
+            return false;
+        }
+    }
+
+    public async Task<bool> TrySetDefensiveFormsAsync()
+    {
+        if (string.IsNullOrEmpty(Names.Defensive))
+        {
+            return false;
+        }
+        _defensivePokemonList = [];
+        FormIndicies.Defensive = 0;
+        if (PokedexCollection.Any(x => x.Equals(Names.Defensive, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            _defensivePokemonList = await _pokeService.GetPokemonAsync(Names.Defensive);
+            return true;
+        }
+        else
+        {
+            SetListsErrors.Add($"Failed to get defensive pokemon: {Names.Defensive}");
+            return false;
+        }
+    }
+
+    private void SetOffensiveAbilities()
+    {
+        if (Levels.Offensive > 100)
+        {
+            Levels.Offensive = 100;
+        }
+        else if (Levels.Offensive < 1)
+        {
+            Levels.Offensive = 1;
+        }
+        _offensiveAbilityList = _offensivePokemonList[FormIndicies.Offensive].Abilities.ToList();
+    }
+
+    private void SetDefensiveAbilities()
+    {
+        if (Levels.Defensive > 100)
+        {
+            Levels.Defensive = 100;
+        }
+        else if (Levels.Defensive < 1)
+        {
+            Levels.Defensive = 1;
+        }
+        _defensiveAbilityList = _defensivePokemonList[FormIndicies.Defensive].Abilities.ToList();
+    }
+}
