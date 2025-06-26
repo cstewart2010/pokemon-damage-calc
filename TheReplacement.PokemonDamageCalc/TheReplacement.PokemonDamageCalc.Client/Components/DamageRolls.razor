@@ -2,7 +2,7 @@
 @using TheReplacement.PokemonDamageCalc.Client.Extensions;
 @using TheReplacement.PokemonDamageCalc.Client.Services;
 @inject IDamageService _damageService;
-<div class= "h3" > Damage Rolls </div>
+<div class="h3">Damage Rolls</div>
 <div class="h4">
     <strong>
         @Move.Name.ToCapitalized():
@@ -22,7 +22,7 @@
 </div>
 
 @code {
-    private IEnumerable<DataModel.DamageRoll> _rolls = [];
+    private IEnumerable<DamageRoll> _rolls = [];
 
     [Parameter]
     public required StattedPokemon OffensivePokemon { get; set; }

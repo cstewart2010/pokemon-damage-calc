@@ -431,7 +431,11 @@
             return move.Type == Types.Steel && offendingPokemon.Ability == Abilities.SteelWorker;
         }
 
-        private static double GetTypeEffectivenessMultiplier(string moveTypeName, StattedPokemon defendingPokemon, bool ignoreResistances = false, bool ignoreImmunities = false)
+        private static double GetTypeEffectivenessMultiplier(
+            string moveTypeName,
+            StattedPokemon defendingPokemon,
+            bool ignoreResistances = false,
+            bool ignoreImmunities = false)
         {
             double effectiveness = 1;
             var types = GetPokemonTypes(defendingPokemon);
@@ -455,7 +459,10 @@
             return effectiveness;
         }
 
-        private static double GetStatusMultiplier(StattedPokemon offendingPokemon, MoveData move, string status)
+        private static double GetStatusMultiplier(
+            StattedPokemon offendingPokemon,
+            MoveData move,
+            string status)
         {
             double statusMultiplier = 1;
             if (move.DamageClass != DamageClasses.Physical)
@@ -486,7 +493,10 @@
             return statusMultiplier;
         }
 
-        private static double GetTerrainMultiplier(string terrain, MoveData move, StattedPokemon offendingPokemon)
+        private static double GetTerrainMultiplier(
+            string terrain,
+            MoveData move,
+            StattedPokemon offendingPokemon)
         {
             double multiplier = 1;
             var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);

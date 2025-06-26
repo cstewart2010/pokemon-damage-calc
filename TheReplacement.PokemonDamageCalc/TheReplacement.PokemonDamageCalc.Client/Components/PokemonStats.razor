@@ -1,6 +1,5 @@
-﻿@using TheReplacement.PokemonDamageCalc.Client.DataModel;
-@using TheReplacement.PokemonDamageCalc.Client.Extensions;
-<div class= "row text-center border border-dark" >
+﻿@using TheReplacement.PokemonDamageCalc.Client.Extensions;
+<div class="row text-center border border-dark">
     <div class="col">Name</div>
     <div class="col border-dark border-start">HP</div>
     <div class="col border-dark border-start">Attack</div>
@@ -49,7 +48,7 @@
 
 @code {
     [Parameter]
-    public required StattedPokemon Pokemon { get; set; }
+    public required DataModel.StattedPokemon Pokemon { get; set; }
     [Parameter]
     public required double CurrentHP { get; set; }
     [Parameter]

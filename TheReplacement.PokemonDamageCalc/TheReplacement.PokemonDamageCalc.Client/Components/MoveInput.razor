@@ -1,10 +1,11 @@
-﻿<div class="input-group">
+﻿@using TheReplacement.PokemonDamageCalc.Client.Extensions;
+<div class="input-group">
     <span class="input-group-text">Move</span>
     <input class="form-control" list="moveDex" placeholder="Type to search..." @bind-value="MoveName" @oninput="OnMoveNameChanged" />
     <datalist id="moveDex">
-        @for (var index = 0; index < MovedexCollection.Count; index++)
+        @foreach (var move in MovedexCollection)
         {
-            <option value="@MovedexCollection[index]">@MovedexCollection[index]</option>
+            <option value="@MovedexCollection">@move</option>
         }
     </datalist>
 </div>
@@ -15,11 +16,11 @@
     [Parameter]
     public EventCallback<string> MoveNameChanged { get; set; }
     [Parameter]
-    public required List<string> MovedexCollection { get; set; }
+    public required ICollection<string> MovedexCollection { get; set; }
 
     private async Task OnMoveNameChanged(ChangeEventArgs e)
     {
-        var name = e?.Value?.ToString();
+        var name = e?.Value?.ToString()?.ToCapitalized();
         if (name != null && MovedexCollection.Contains(name))
         {
             await MoveNameChanged.InvokeAsync(name);

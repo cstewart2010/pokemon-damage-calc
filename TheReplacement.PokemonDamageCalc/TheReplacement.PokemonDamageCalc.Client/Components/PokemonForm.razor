@@ -1,5 +1,4 @@
-﻿@using TheReplacement.PokemonDamageCalc.Client.Constants;
-@using TheReplacement.PokemonDamageCalc.Client.DTOs;
+﻿@using TheReplacement.PokemonDamageCalc.Client.DTOs;
 @using TheReplacement.PokemonDamageCalc.Client.Extensions;
 <div class="input-group">
     <span class="input-group-text">Offensive Pokemon</span>
@@ -33,17 +32,18 @@
         }
     </InputSelect>
     <span class="input-group-text">Held Item</span>
-    <InputSelect class="form-select" @bind-Value="Item" @oninput="e => OnStringChanged(e, ItemChanged)">
+    <input class="form-control" list="itemList" placeholder="Type to search..." @bind-value="Item" @oninput="e => OnStringChanged(e, ItemChanged)" />
+    <datalist id="itemList">
         @foreach (var item in ItemCollection)
         {
             <option value="@item">@item</option>
         }
-    </InputSelect>
+    </datalist>
     @if (IsPokemonTera)
     {
         <span class="input-group-text">Tera Type</span>
         <InputSelect class="form-select" @bind-Value="Tera" @oninput="e => OnStringChanged(e, TeraChanged)">
-            @foreach (var type in Maps.TypeEffectivenessChart.Keys)
+            @foreach (var type in Constants.Maps.TypeEffectivenessChart.Keys)
             {
                 <option value="@type">@type.ToCapitalized()</option>
             }
@@ -61,7 +61,7 @@
     [Parameter]
     public required List<string> Natures { get; set; }
     [Parameter]
-    public required List<string> ItemCollection { get; set; }
+    public required ICollection<string> ItemCollection { get; set; }
     [Parameter]
     public required int FormIndex { get; set; }
     [Parameter]

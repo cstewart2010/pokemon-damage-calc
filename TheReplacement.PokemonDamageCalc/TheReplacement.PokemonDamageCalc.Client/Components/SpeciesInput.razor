@@ -1,19 +1,19 @@
 ﻿@using TheReplacement.PokemonDamageCalc.Client.Extensions;
-<div class= "input-group" >
+<div class="input-group">
     <span class="input-group-text">Offensive Pokemon Species</span>
     <input class="form-control" list="offensiveDex" placeholder="Type to search..." @bind-value="OffensiveName" @oninput="OnOffensiveNameChanged" />
     <datalist id="offensiveDex">
-        @for (var index = 0; index < PokedexCollection.Count; index++)
+        @foreach (var pokemon in PokedexCollection)
         {
-            <option value="@PokedexCollection[index]">@PokedexCollection[index]</option>
+            <option value="@pokemon">@pokemon</option>
         }
     </datalist>
     <span class="input-group-text">Defensive Pokemon Species</span>
     <input class="form-control" list="defensiveDex" placeholder="Type to search..." @bind-value="DefensiveName" @oninput="OnDefensiveNameChanged" />
     <datalist id="defensiveDex">
-        @for (var index = 0; index < PokedexCollection.Count; index++)
+        @foreach (var pokemon in PokedexCollection)
         {
-            <option value="@PokedexCollection[index]">@PokedexCollection[index]</option>
+            <option value="@pokemon">@pokemon</option>
         }
     </datalist>
 </div>
@@ -29,7 +29,7 @@
     [Parameter]
     public EventCallback<string> DefensiveNameChanged { get; set; }
     [Parameter]
-    public required List<string> PokedexCollection { get; set; }
+    public required ICollection<string> PokedexCollection { get; set; }
 
     private async Task OnOffensiveNameChanged(ChangeEventArgs e)
     {
