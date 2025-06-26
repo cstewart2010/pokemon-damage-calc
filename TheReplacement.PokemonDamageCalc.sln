@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36202.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheReplacement.PokemonDamageCalc", "TheReplacement.PokemonDamageCalc\TheReplacement.PokemonDamageCalc\TheReplacement.PokemonDamageCalc.csproj", "{931BC452-B98D-4720-AFBE-71A4E0F90A73}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheReplacement.PokemonDamageCalc.Client", "TheReplacement.PokemonDamageCalc\TheReplacement.PokemonDamageCalc.Client\TheReplacement.PokemonDamageCalc.Client.csproj", "{67210A48-0D42-4B8E-A6E6-8511E17815D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheReplacement.PokemonDamageCalc", "TheReplacement.PokemonDamageCalc\TheReplacement.PokemonDamageCalc.csproj", "{931BC452-B98D-4720-AFBE-71A4E0F90A73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		{931BC452-B98D-4720-AFBE-71A4E0F90A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{931BC452-B98D-4720-AFBE-71A4E0F90A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{931BC452-B98D-4720-AFBE-71A4E0F90A73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67210A48-0D42-4B8E-A6E6-8511E17815D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67210A48-0D42-4B8E-A6E6-8511E17815D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67210A48-0D42-4B8E-A6E6-8511E17815D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67210A48-0D42-4B8E-A6E6-8511E17815D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
