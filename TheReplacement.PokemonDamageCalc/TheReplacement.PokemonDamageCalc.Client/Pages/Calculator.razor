@@ -119,9 +119,13 @@
 
     <TheReplacement.PokemonDamageCalc.Client.Components.ErrorSection SetListsErrors="@SetListsErrors"
                                                                  SetPokemonErrors="@SetPokemonErrors"
-                                                                 SetMovesErrors="@SetMovesErrors" />
+    SetMovesErrors="@SetMovesErrors" />
 }
 
+else
+{
+    <TheReplacement.PokemonDamageCalc.Client.Components.Spinner />
+}
 @code {
     private StringPair
         Names = new StringPair { Offensive = "Abomasnow", Defensive = "Abomasnow" },
