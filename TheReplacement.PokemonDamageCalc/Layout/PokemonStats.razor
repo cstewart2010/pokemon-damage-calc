@@ -132,9 +132,9 @@
 
     private async Task OnIntChanged(ChangeEventArgs e, EventCallback<int> callback)
     {
-        if (int.TryParse(e.Value?.ToString(), out var hp))
+        if (int.TryParse(e.Value?.ToString(), out var number))
         {
-            await callback.InvokeAsync(hp);
+            await callback.InvokeAsync(number);
         }
     }
 }
