@@ -3,7 +3,7 @@
 <div class="row mb-3">
     <div class="col-12 col-sm-6 col-md-4 col-lg">
         <div class="input-group">
-            <span class="input-group-text">Offensive Pokemon</span>
+            <span class="input-group-text">@Form</span>
             @if (PokemonList.Count > 1)
             {
                 <InputSelect class="form-select" @bind-Value="FormIndex" @oninput="e => OnIntChanged(e, FormIndexChanged)">
@@ -83,6 +83,8 @@
 </div>
 
 @code {
+    [Parameter, EditorRequired]
+    public string Form { get; set; }
     [Parameter, EditorRequired]
     public bool IsPokemonTera { get; set; }
     [Parameter, EditorRequired]

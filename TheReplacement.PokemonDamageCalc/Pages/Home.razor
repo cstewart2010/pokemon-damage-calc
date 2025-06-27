@@ -39,7 +39,8 @@
                                                              AbilityList="_offensiveAbilityList"
                                                              Natures="Natures"
                                                              ItemCollection="ItemCollection"
-                                                             IsPokemonTera="_conditionals.IsOffensivePokemonTera" />
+                                                             IsPokemonTera="_conditionals.IsOffensivePokemonTera"
+                                                             Form="Offensive Pokemon" />
         <TheReplacement.PokemonDamageCalc.Layout.PokemonForm @bind-FormIndex="FormIndicies.Defensive" @bind-FormIndex:after="UpdateDefensiveForm"
                                                              @bind-Level="Levels.Defensive" @bind-Level:after="UpdateDefensiveLevel"
                                                              @bind-NatureIndex="NatureIndicies.Defensive" @bind-NatureIndex:after="UpdateDefensiveNatureAsync"
@@ -50,7 +51,8 @@
                                                              AbilityList="_defensiveAbilityList"
                                                              Natures="Natures"
                                                              ItemCollection="ItemCollection"
-                                                             IsPokemonTera="_conditionals.IsDefensivePokemonTera" />
+                                                             IsPokemonTera="_conditionals.IsDefensivePokemonTera"
+                                                             Form="Defensive Pokemon" />
 
         <TheReplacement.PokemonDamageCalc.Layout.PokemonStats Pokemon="_offensivePokemon"
                                                               @bind-CurrentHP="_offensivePokemon.CurrentHP"
