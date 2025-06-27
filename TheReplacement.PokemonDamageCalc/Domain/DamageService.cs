@@ -412,18 +412,35 @@
 
         private static double GetStab(StattedPokemon offendingPokemon, MoveData move)
         {
-            var types = offendingPokemon.Types.Append(offendingPokemon.TeraType).Where(x => x != null);
-            if (types.Contains(move.Type) || IsSteelWorker(offendingPokemon, move))
+            double stabMultiplier = 1;
+            var types = offendingPokemon.Types;
+            var typeCount = offendingPokemon.Types.Append(offendingPokemon.TeraType).Count(x => x == move.Type);
+            if (types.Contains(move.Type))
             {
-                if (offendingPokemon.Ability == Abilities.Adaptability)
+                if (offendingPokemon.TeraType == move.Type)
                 {
-                    return 2;
+                    if (offendingPokemon.Ability == Abilities.Adaptability)
+                    {
+                        stabMultiplier = 2.25;
+                    }
+                    else
+                    {
+                        stabMultiplier = 2;
+                    }
                 }
 
-                return 1.5;
+                stabMultiplier = 1.5;
+            }
+            else if (offendingPokemon.TeraType == move.Type)
+            {
+                stabMultiplier = 1.5;
+            }
+            if (IsSteelWorker(offendingPokemon, move))
+            {
+                stabMultiplier *= 1.5;
             }
 
-            return 1;
+            return stabMultiplier;
         }
 
         private static bool IsSteelWorker(StattedPokemon offendingPokemon, MoveData move)

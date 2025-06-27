@@ -1,5 +1,5 @@
 ﻿@using TheReplacement.PokemonDamageCalc.Extensions;
-<div class="input-group">
+<div class="input-group mb-3">
     <span class="input-group-text">Move</span>
     <input class="form-control" list="moveDex" placeholder="Type to search..." @bind-value="MoveName" @oninput="OnMoveNameChanged" />
     <datalist id="moveDex">
@@ -20,7 +20,7 @@
 
     private async Task OnMoveNameChanged(ChangeEventArgs e)
     {
-        var name = e?.Value?.ToString()?.ToCapitalized();
+        var name = e?.Value?.ToString();
         if (name != null && MovedexCollection.Contains(name))
         {
             await MoveNameChanged.InvokeAsync(name);

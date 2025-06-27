@@ -9,9 +9,23 @@
 <PageTitle>Calculator</PageTitle>
 @if (_isReady)
 {
+    <TheReplacement.PokemonDamageCalc.Layout.DamageRolls OffensivePokemon="@_offensivePokemon"
+                                                         DefensivePokemon="@_defensivePokemon"
+                                                         Conditionals="@_conditionals"
+                                                         StatusConditions="@StatusConditions"
+                                                         Weather="@_weather"
+                                                         Terrain="@_terrain"
+                                                         SetMovesErrors="@SetMovesErrors"
+                                                         Move="@_move" />
+
+    <TheReplacement.PokemonDamageCalc.Layout.MoveDataSection Move="_move" />
+
     <TheReplacement.PokemonDamageCalc.Layout.SpeciesInput @bind-OffensiveName="Names.Offensive" @bind-OffensiveName:after="ResetOffensivePokemonAsync"
                                                           @bind-DefensiveName="Names.Defensive" @bind-DefensiveName:after="ResetDefensivePokemonAsync"
                                                           PokedexCollection="PokedexCollection" />
+
+    <TheReplacement.PokemonDamageCalc.Layout.MoveInput @bind-MoveName="_moveName" @bind-MoveName:after="SetMoveAsync"
+                                                       MovedexCollection="@MovedexCollection" />
 
     @if (!(_offensivePokemon == null || _defensivePokemon == null))
     {
@@ -76,12 +90,8 @@
                                                               @bind-SpecialAttackStages="_defensivePokemon.Stages.SpecialAttack"
                                                               @bind-SpecialDefenseStages="_defensivePokemon.Stages.SpecialDefense"
                                                               @bind-SpeedStages="_defensivePokemon.Stages.Speed" />
-
-        <TheReplacement.PokemonDamageCalc.Layout.MoveInput @bind-MoveName="_moveName" @bind-MoveName:after="SetMoveAsync"
-                                                           MovedexCollection="@MovedexCollection" />
         @if (_move != null)
         {
-            <TheReplacement.PokemonDamageCalc.Layout.MoveDataSection Move="_move" />
             <TheReplacement.PokemonDamageCalc.Layout.ConditionalValues OffensivePokemon="@_offensivePokemon.Species"
                                                                        DefensivePokemon="@_defensivePokemon.Species"
                                                                        @bind-IsCritical="_conditionals.IsCriticalHit"
@@ -105,14 +115,6 @@
                                                                        @bind-DefensiveStatusCondition="StatusConditions.Defensive"
                                                                        @bind-Weather="_weather"
                                                                        @bind-Terrain="_terrain" />
-            <TheReplacement.PokemonDamageCalc.Layout.DamageRolls OffensivePokemon="@_offensivePokemon"
-                                                                 DefensivePokemon="@_defensivePokemon"
-                                                                 Conditionals="@_conditionals"
-                                                                 StatusConditions="@StatusConditions"
-                                                                 Weather="@_weather"
-                                                                 Terrain="@_terrain"
-                                                                 SetMovesErrors="@SetMovesErrors"
-                                                                 Move="@_move" />
         }
     }
 
@@ -203,7 +205,6 @@ else
 
     private async Task SetMoveAsync()
     {
-        _move = null;
         SetMovesErrors.Clear();
         if (string.IsNullOrEmpty(_moveName))
         {
@@ -211,10 +212,6 @@ else
         }
         _move = await _pokeService.GetMoveAsync(_moveName);
         if (_move == null)
-        {
-            return;
-        }
-        else
         {
             SetMovesErrors.Add($"Failed to get move: {_moveName}");
         }
@@ -374,7 +371,6 @@ else
         {
             return false;
         }
-        _offensivePokemonList = [];
         FormIndicies.Offensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Offensive, StringComparison.CurrentCultureIgnoreCase)))
         {
@@ -394,7 +390,6 @@ else
         {
             return false;
         }
-        _defensivePokemonList = [];
         FormIndicies.Defensive = 0;
         if (PokedexCollection.Any(x => x.Equals(Names.Defensive, StringComparison.CurrentCultureIgnoreCase)))
         {

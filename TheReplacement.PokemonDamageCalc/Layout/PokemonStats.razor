@@ -1,50 +1,90 @@
 ﻿@using TheReplacement.PokemonDamageCalc.Extensions;
-<div class="row text-center border border-dark">
-    <div class="col">Name</div>
-    <div class="col border-dark border-start">HP</div>
-    <div class="col border-dark border-start">Attack</div>
-    <div class="col border-dark border-start">Defense</div>
-    <div class="col border-dark border-start">Special Attack</div>
-    <div class="col border-dark border-start">Special Defense</div>
-    <div class="col border-dark border-start">Speed</div>
-</div>
-<div class="row text-center border border-dark border-top-0">
-    <div class="col">@Pokemon.Species.ToCapitalized() (@string.Join("/", Pokemon.Types.Select(x => x.ToCapitalized())))</div>
-    <input class="col border-dark border-start form-control" type="number" min="0" max="@Pokemon.HP" @bind-value="CurrentHP" @oninput="OnCurrentHPChanged" />
-    <div class="col border-dark border-start">@Pokemon.Attack</div>
-    <div class="col border-dark border-start">@Pokemon.Defense</div>
-    <div class="col border-dark border-start">@Pokemon.SpecialAttack</div>
-    <div class="col border-dark border-start">@Pokemon.SpecialDefense</div>
-    <div class="col border-dark border-start">@Pokemon.Speed</div>
-</div>
-<div class="row text-center border border-dark border-top-0">
-    <div class="col">IVs</div>
-    <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.HP" @oninput="e => OnIntChanged(e, HPIVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.Attack" @oninput="e => OnIntChanged(e, AttackIVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.Defense" @oninput="e => OnIntChanged(e, DefenseIVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.SpecialAttack" @oninput="e => OnIntChanged(e, SpecialAttackIVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.SpecialDefense" @oninput="e => OnIntChanged(e, SpecialDefenseIVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.Speed" @oninput="e => OnIntChanged(e, SpeedIVsChanged)" />
-</div>
-<div class="row text-center border border-dark border-top-0">
-    <div class="col">EVs</div>
-    <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.HP" @oninput="e => OnIntChanged(e, HPEVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.Attack" @oninput="e => OnIntChanged(e, AttackEVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.Defense" @oninput="e => OnIntChanged(e, DefenseEVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.SpecialAttack" @oninput="e => OnIntChanged(e, SpecialAttackEVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.SpecialDefense" @oninput="e => OnIntChanged(e, SpecialDefenseEVsChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.Speed" @oninput="e => OnIntChanged(e, SpeedEVsChanged)" />
-</div>
-<div class="row text-center border border-dark border-top-0">
-    <div class="col">Stages</div>
-    <div class="col border-dark border-start">N/A</div>
-    <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.Attack" @oninput="e => OnIntChanged(e, AttackStagesChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.Defense" @oninput="e => OnIntChanged(e, DefenseStagesChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.SpecialAttack" @oninput="e => OnIntChanged(e, SpecialAttackStagesChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.SpecialDefense" @oninput="e => OnIntChanged(e, SpecialDefenseStagesChanged)" />
-    <input class="col border-dark border-start form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.Speed" @oninput="e => OnIntChanged(e, SpeedStagesChanged)" />
-</div>
-<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">HP</th>
+            <th scope="col">Attack</th>
+            <th scope="col">Defense</th>
+            <th scope="col">Special Attack</th>
+            <th scope="col">Special Defense</th>
+            <th scope="col">Speed</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">@Pokemon.Species.ToCapitalized() (@string.Join("/", Pokemon.Types.Select(x => x.ToCapitalized())))</th>
+            <td>
+                <input class="form-control" type="number" min="0" max="@Pokemon.HP" @bind-value="CurrentHP" @oninput="OnCurrentHPChanged" />
+            </td>
+            <td>@Pokemon.Attack</td>
+            <td>@Pokemon.Defense</td>
+            <td>@Pokemon.SpecialAttack</td>
+            <td>@Pokemon.SpecialDefense</td>
+            <td>@Pokemon.Speed</td>
+        </tr>
+        <tr>
+            <th scope="row">IVs</th>
+            <td>
+                <input class="form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.HP" @oninput="e => OnIntChanged(e, HPIVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.Attack" @oninput="e => OnIntChanged(e, AttackIVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.Defense" @oninput="e => OnIntChanged(e, DefenseIVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.SpecialAttack" @oninput="e => OnIntChanged(e, SpecialAttackIVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.SpecialDefense" @oninput="e => OnIntChanged(e, SpecialDefenseIVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="31" @bind-value="Pokemon.IVs.Speed" @oninput="e => OnIntChanged(e, SpeedIVsChanged)" />
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">EVs</th>
+            <td>
+                <input class="form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.HP" @oninput="e => OnIntChanged(e, HPEVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.Attack" @oninput="e => OnIntChanged(e, AttackEVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.Defense" @oninput="e => OnIntChanged(e, DefenseEVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.SpecialAttack" @oninput="e => OnIntChanged(e, SpecialAttackEVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.SpecialDefense" @oninput="e => OnIntChanged(e, SpecialDefenseEVsChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="0" max="252" @bind-value="Pokemon.EVs.Speed" @oninput="e => OnIntChanged(e, SpeedEVsChanged)" />
+            </td>
+        </tr>
+        <tr>
+            <th scope="row" colspan="2">Stages</th>
+            <td>
+                <input class="form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.Attack" @oninput="e => OnIntChanged(e, AttackStagesChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.Defense" @oninput="e => OnIntChanged(e, DefenseStagesChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.SpecialAttack" @oninput="e => OnIntChanged(e, SpecialAttackStagesChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.SpecialDefense" @oninput="e => OnIntChanged(e, SpecialDefenseStagesChanged)" />
+            </td>
+            <td>
+                <input class="form-control" type="number" min="-6" max="6" @bind-value="Pokemon.Stages.Speed" @oninput="e => OnIntChanged(e, SpeedStagesChanged)" />
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 @code {
     [Parameter, EditorRequired]

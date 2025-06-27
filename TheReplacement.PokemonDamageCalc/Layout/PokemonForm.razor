@@ -1,60 +1,84 @@
 ﻿@using TheReplacement.PokemonDamageCalc.DTOs;
 @using TheReplacement.PokemonDamageCalc.Extensions;
-<div class="input-group">
-    <span class="input-group-text">Offensive Pokemon</span>
-    @if (PokemonList.Count > 1)
-    {
-        <InputSelect class="form-select" @bind-Value="FormIndex" @oninput="e => OnIntChanged(e, FormIndexChanged)">
-            @for (var index = 0; index < PokemonList.Count; index++)
+<div class="row mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg">
+        <div class="input-group">
+            <span class="input-group-text">Offensive Pokemon</span>
+            @if (PokemonList.Count > 1)
             {
-                <option value="@index">@PokemonList[index].SpeciesName.ToCapitalized()</option>
-            }
-        </InputSelect>
-    }
-    else
-    {
-        <div class="form-select">@PokemonList.First().SpeciesName.ToCapitalized()</div>
-    }
-    <span class="input-group-text">Level</span>
-    <input class="form-control" type="number" min="1" max="100" @bind-value="Level" @oninput="e => OnIntChanged(e, LevelChanged)" />
-    <span class="input-group-text">Nature</span>
-    <InputSelect class="form-select" @bind-Value="NatureIndex" @oninput="e => OnIntChanged(e, NatureIndexChanged)">
-        @for (var index = 0; index < Natures.Count; index++)
-        {
-            <option value="@index">@Natures[index]</option>
-        }
-    </InputSelect>
-    <span class="input-group-text">Ability</span>
-    <InputSelect class="form-select" @bind-Value="Ability" @oninput="e => OnIntChanged(e, AbilityChanged)">
-        @for (var index = 0; index < AbilityList.Count; index++)
-        {
-            @if (AbilityList[index].IsHidden)
-            {
-                <option value="@index">@AbilityList[index].Name.ToCapitalized() (Hidden)</option>
+                <InputSelect class="form-select" @bind-Value="FormIndex" @oninput="e => OnIntChanged(e, FormIndexChanged)">
+                    @for (var index = 0; index < PokemonList.Count; index++)
+                    {
+                        <option value="@index">@PokemonList[index].SpeciesName.ToCapitalized()</option>
+                    }
+                </InputSelect>
             }
             else
             {
-                <option value="@index">@AbilityList[index].Name.ToCapitalized()</option>
+                <div class="form-select">@PokemonList.First().SpeciesName.ToCapitalized()</div>
             }
-        }
-    </InputSelect>
-    <span class="input-group-text">Held Item</span>
-    <input class="form-control" list="itemList" placeholder="Type to search..." @bind-value="Item" @oninput="e => OnStringChanged(e, ItemChanged)" />
-    <datalist id="itemList">
-        @foreach (var item in ItemCollection)
-        {
-            <option value="@item">@item</option>
-        }
-    </datalist>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg">
+        <div class="input-group">
+            <span class="input-group-text">Level</span>
+            <input class="form-control" type="number" min="1" max="100" @bind-value="Level" @oninput="e => OnIntChanged(e, LevelChanged)" />
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg">
+        <div class="input-group">
+            <span class="input-group-text">Nature</span>
+            <InputSelect class="form-select" @bind-Value="NatureIndex" @oninput="e => OnIntChanged(e, NatureIndexChanged)">
+                @for (var index = 0; index < Natures.Count; index++)
+                {
+                    <option value="@index">@Natures[index]</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg">
+        <div class="input-group">
+            <span class="input-group-text">Ability</span>
+            <InputSelect class="form-select" @bind-Value="Ability" @oninput="e => OnIntChanged(e, AbilityChanged)">
+                @for (var index = 0; index < AbilityList.Count; index++)
+                {
+                    @if (AbilityList[index].IsHidden)
+                    {
+                        <option value="@index">@AbilityList[index].Name.ToCapitalized() (Hidden)</option>
+                    }
+                    else
+                    {
+                        <option value="@index">@AbilityList[index].Name.ToCapitalized()</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg">
+        <div class="input-group">
+            <span class="input-group-text">Held Item</span>
+            <input class="form-control" list="itemList" placeholder="Type to search..." @bind-value="Item" @oninput="e => OnStringChanged(e, ItemChanged)" />
+            <datalist id="itemList">
+                @foreach (var item in ItemCollection)
+                {
+                    <option value="@item">@item</option>
+                }
+            </datalist>
+        </div>
+    </div>
     @if (IsPokemonTera)
     {
-        <span class="input-group-text">Tera Type</span>
-        <InputSelect class="form-select" @bind-Value="Tera" @oninput="e => OnStringChanged(e, TeraChanged)">
-            @foreach (var type in Constants.Maps.TypeEffectivenessChart.Keys)
-            {
-                <option value="@type">@type.ToCapitalized()</option>
-            }
-        </InputSelect>
+        <div class="col-12 col-sm-6 col-md-4 col-lg">
+            <div class="input-group">
+                <span class="input-group-text">Tera Type</span>
+                <InputSelect class="form-select" @bind-Value="Tera" @oninput="e => OnStringChanged(e, TeraChanged)">
+                    @foreach (var type in Constants.Maps.TypeEffectivenessChart.Keys)
+                    {
+                        <option value="@type">@type.ToCapitalized()</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
     }
 </div>
 

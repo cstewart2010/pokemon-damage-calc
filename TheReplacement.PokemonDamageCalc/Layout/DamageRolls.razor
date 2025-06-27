@@ -2,23 +2,31 @@
 @using TheReplacement.PokemonDamageCalc.Extensions;
 @using TheReplacement.PokemonDamageCalc.Services;
 @inject IDamageService _damageService;
-<div class="h3">Damage Rolls</div>
 <div class="h4">
     <strong>
         @Move.Name.ToCapitalized():
     </strong>
     @SetDamageRolls()
 </div>
-<div class="row border border-dark text-center mb-4">
-    @foreach (var damageRoll in _rolls)
-    {
-        <div class="col-6 col-lg-3 col-xl-2 col-xxl border-end border-dark">
-            <div class="d-flex d-flex-column align-items-center">
-                <div class="col border-end border-dark">@damageRoll.Roll% DR</div>
-                <div class="col">@damageRoll.Damage</div>
-            </div>
-        </div>
-    }
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                @foreach (var damageRoll in _rolls)
+                {
+                    <th>@damageRoll.Roll% DR</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                @foreach (var damageRoll in _rolls)
+                {
+                    <td>@damageRoll.Damage</td>
+                }
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 @code {

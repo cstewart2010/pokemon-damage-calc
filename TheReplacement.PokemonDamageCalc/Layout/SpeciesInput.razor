@@ -1,21 +1,29 @@
 ﻿@using TheReplacement.PokemonDamageCalc.Extensions;
-<div class="input-group">
-    <span class="input-group-text">Offensive Pokemon Species</span>
-    <input class="form-control" list="offensiveDex" placeholder="Type to search..." @bind-value="OffensiveName" @oninput="OnOffensiveNameChanged" />
-    <datalist id="offensiveDex">
-        @foreach (var pokemon in PokedexCollection)
-        {
-            <option value="@pokemon">@pokemon</option>
-        }
-    </datalist>
-    <span class="input-group-text">Defensive Pokemon Species</span>
-    <input class="form-control" list="defensiveDex" placeholder="Type to search..." @bind-value="DefensiveName" @oninput="OnDefensiveNameChanged" />
-    <datalist id="defensiveDex">
-        @foreach (var pokemon in PokedexCollection)
-        {
-            <option value="@pokemon">@pokemon</option>
-        }
-    </datalist>
+<div class="row mb-3">
+    <div class="col-12 col-md">
+        <div class="input-group">
+            <span class="input-group-text">Offensive Pokemon Species</span>
+            <input class="form-control" list="offensiveDex" placeholder="Type to search..." @bind-value="OffensiveName" @oninput="OnOffensiveNameChanged" />
+            <datalist id="offensiveDex">
+                @foreach (var pokemon in PokedexCollection)
+                {
+                    <option value="@pokemon">@pokemon</option>
+                }
+            </datalist>
+        </div>
+    </div>
+    <div class="col-12 col-md">
+        <div class="input-group">
+            <span class="input-group-text">Defensive Pokemon Species</span>
+            <input class="form-control" list="defensiveDex" placeholder="Type to search..." @bind-value="DefensiveName" @oninput="OnDefensiveNameChanged" />
+            <datalist id="defensiveDex">
+                @foreach (var pokemon in PokedexCollection)
+                {
+                    <option value="@pokemon">@pokemon</option>
+                }
+            </datalist>
+        </div>
+    </div>
 </div>
 
 @code {
