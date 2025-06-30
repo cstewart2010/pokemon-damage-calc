@@ -18,9 +18,10 @@
             get => _currentHp;
             set
             {
-                if (value > HP)
+                var maxHp = HpFormula();
+                if (value > maxHp)
                 {
-                    _currentHp = HP;
+                    _currentHp = maxHp;
                 }
                 else if (value < 0)
                 {
@@ -59,6 +60,13 @@
         }
 
         private double GetHp()
+        {
+            var hp = HpFormula();
+            CurrentHP = hp;
+            return hp;
+        }
+
+        private double HpFormula()
         {
             var baseHp = _pokemon.Stats.HP;
             int ivs = IVs.HP;
