@@ -12,10 +12,4 @@
 	<PackageReference Include="PokeApiNet" Version="4.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="wwwroot\css\app.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

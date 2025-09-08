@@ -414,26 +414,27 @@
         {
             double stabMultiplier = 1;
             var types = offendingPokemon.Types;
-            var typeCount = offendingPokemon.Types.Append(offendingPokemon.TeraType).Count(x => x == move.Type);
-            if (types.Contains(move.Type))
+            if (types.Contains(move.Type) && offendingPokemon.TeraType == move.Type)
             {
-                if (offendingPokemon.TeraType == move.Type)
+                if (offendingPokemon.Ability == Abilities.Adaptability)
                 {
-                    if (offendingPokemon.Ability == Abilities.Adaptability)
-                    {
-                        stabMultiplier = 2.25;
-                    }
-                    else
-                    {
-                        stabMultiplier = 2;
-                    }
+                    stabMultiplier = 2.25;
                 }
-
-                stabMultiplier = 1.5;
+                else
+                {
+                    stabMultiplier = 2;
+                }
             }
-            else if (offendingPokemon.TeraType == move.Type)
+            else if (types.Contains(move.Type) || offendingPokemon.TeraType == move.Type)
             {
-                stabMultiplier = 1.5;
+                if (offendingPokemon.Ability == Abilities.Adaptability)
+                {
+                    stabMultiplier = 2;
+                }
+                else
+                {
+                    stabMultiplier = 1.5;
+                }
             }
             if (IsSteelWorker(offendingPokemon, move))
             {
